@@ -54,12 +54,9 @@ const { theme, toggleTheme } = useThemeStore();
 1. Clona el repositorio:
 
 ```bash
-git clone https://github.com/tuusuario/talkingchildren.git
-cd talkingchildren
-```
-
 git clone https://github.com/Blxckbxll24/talkingchildren.git
 cd talkingchildren
+```
 
 2. Instala las dependencias:
 
