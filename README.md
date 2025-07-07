@@ -58,7 +58,7 @@ git clone https://github.com/tuusuario/talkingchildren.git
 cd talkingchildren
 ```
 
-git clone https://github.com/tuusuario/talkingchildren.git
+git clone https://github.com/Blxckbxll24/talkingchildren.git
 cd talkingchildren
 
 2. Instala las dependencias:
