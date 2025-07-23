@@ -7,17 +7,23 @@ import {
   ScrollView,
   Alert,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTheme } from '../context/ThemeContext';
+import { useAuthStore, ROLES } from '../stores/authStore';
 import type { RootStackParamList } from '../navigation/AppNavigator';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { Picker } from '@react-native-picker/picker';
 
 const RegisterScreen = () => {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  
+  // Zustand store
+  const { register, isLoading, error, clearError } = useAuthStore();
 
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -26,22 +32,101 @@ const RegisterScreen = () => {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
+  const [roleId, setRoleId] = useState<number>(ROLES.CHILD);
+  
+  // Estados de validación
+  const [nameError, setNameError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [confirmPasswordError, setConfirmPasswordError] = useState('');
 
-  const handleSubmit = () => {
+  // Validaciones
+  const validateName = (name: string) => {
+    if (!name.trim()) {
+      return 'El nombre es requerido';
+    }
+    if (name.trim().length < 2) {
+      return 'El nombre debe tener al menos 2 caracteres';
+    }
+    return '';
+  };
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email) {
+      return 'El correo es requerido';
+    }
+    if (!emailRegex.test(email)) {
+      return 'Formato de correo inválido';
+    }
+    return '';
+  };
+
+  const validatePassword = (password: string) => {
+    if (!password) {
+      return 'La contraseña es requerida';
+    }
+    if (password.length < 6) {
+      return 'La contraseña debe tener al menos 6 caracteres';
+    }
+    return '';
+  };
+
+  const validateConfirmPassword = (password: string, confirmPassword: string) => {
+    if (!confirmPassword) {
+      return 'Confirma tu contraseña';
+    }
     if (password !== confirmPassword) {
-      setError('Las contraseñas no coinciden');
+      return 'Las contraseñas no coinciden';
+    }
+    return '';
+  };
+
+  const handleSubmit = async () => {
+    // Limpiar errores previos
+    clearError();
+    setNameError('');
+    setEmailError('');
+    setPasswordError('');
+    setConfirmPasswordError('');
+
+    // Validar campos
+    const nameValidation = validateName(fullName);
+    const emailValidation = validateEmail(email);
+    const passwordValidation = validatePassword(password);
+    const confirmPasswordValidation = validateConfirmPassword(password, confirmPassword);
+
+    if (nameValidation) {
+      setNameError(nameValidation);
       return;
     }
-    setError('');
-    const formattedBirthdate = birthdate
-      ? birthdate.toISOString().split('T')[0]
-      : 'No seleccionada';
-    Alert.alert(
-      'Registro',
-      `Registrado: ${fullName} - ${email} - ${formattedBirthdate} - ${phone}`
-    );
-    navigation.navigate('Login');
+
+    if (emailValidation) {
+      setEmailError(emailValidation);
+      return;
+    }
+
+    if (passwordValidation) {
+      setPasswordError(passwordValidation);
+      return;
+    }
+
+    if (confirmPasswordValidation) {
+      setConfirmPasswordError(confirmPasswordValidation);
+      return;
+    }
+
+    // Intentar registro
+    const success = await register({
+      name: fullName.trim(),
+      email: email.toLowerCase().trim(),
+      password,
+      role_id: roleId,
+    });
+    
+    if (success) {
+      navigation.navigate('Login');
+    }
   };
 
   const handleDateChange = (event: any, selectedDate?: Date) => {

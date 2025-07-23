@@ -1,0 +1,13 @@
+# Archivo de audio de prueba para TTS
+
+Este archivo representa un audio de prueba para la funcionalidad TTS.
+En una implementación real, aquí habría un archivo .mp3 o .wav generado por el sistema TTS del backend.
+
+Para implementar completamente:
+1. El backend debe generar archivos de audio TTS a partir del texto de los mensajes
+2. Los archivos se almacenan en la carpeta 'uploads' del backend
+3. La app frontend los descarga y reproduce usando expo-av
+
+Rutas de ejemplo:
+- Backend: /uploads/audio/mensaje_123.mp3
+- Frontend: Audio.Sound.createAsync({ uri: `${API_BASE_URL}/uploads/audio/mensaje_123.mp3` })

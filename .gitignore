@@ -1,23 +1,63 @@
+# Dependencias
 node_modules/
+npm-debug.*
+yarn-error.log*
+yarn-debug.log*
+
+# Expo
 .expo/
 dist/
-npm-debug.*
+web-build/
+
+# Metro
+.metro-health-check*
+
+# Certificados y claves
 *.jks
 *.p8
 *.p12
 *.key
 *.mobileprovision
+
+# Archivos temporales
 *.orig.*
-web-build/
+*.tmp
+*.temp
 
+# Logs
+*.log
+logs/
 
+# Build artifacts
+build/
+.gradle/
 
+# IDE y editores
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 
-ios
-android
-
-# macOS
+# OS generated files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
-# Temporary files created by Metro to check the health of the file watcher
-.metro-health-check*
+# Configuración local
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# React Native
+ios/
+android/
+
+# Debugging
+*.hprof

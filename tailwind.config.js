@@ -3,9 +3,7 @@ module.exports = {
   darkMode: 'class',
   content: [
     './App.{js,ts,tsx}',
-    './components/**/*.{js,ts,tsx}',
-    './screens/**/*.{js,ts,tsx}',
-    './context/**/*.{js,ts,tsx}',
+    './src/**/*.{js,ts,tsx}',
   ],
   presets: [require('nativewind/preset')],
   theme: {
