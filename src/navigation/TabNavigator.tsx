@@ -13,6 +13,7 @@ import MessagesScreen from '../screens/MessagesScreen';
 import TTSDashboardScreen from '../screens/TTSDashboardScreen';
 import ChildrenManagementScreen from '../screens/ChildrenManagementScreen';
 import MyMessagesScreen from '../screens/MyMessagesScreen';
+import UsersScreen from '../screens/UsersScreen';
 
 export type TabParamList = {
   Dashboard: undefined;
@@ -23,6 +24,7 @@ export type TabParamList = {
   TTSDashboard: undefined;
   ChildrenManagement: undefined;
   MyMessages: undefined;
+  Users: undefined;
 };
 
 const Tab = createBottomTabNavigator<TabParamList>();
@@ -50,6 +52,7 @@ const TabNavigator = () => {
           <Tab.Screen name="Dashboard" component={DashboardScreen} />
           <Tab.Screen name="TTSDashboard" component={TTSDashboardScreen} />
           <Tab.Screen name="Messages" component={MessagesScreen} />
+          <Tab.Screen name="Users" component={UsersScreen} />
           <Tab.Screen name="Settings" component={SettingsScreen} />
           <Tab.Screen name="Profile" component={ProfileScreen} />
         </>

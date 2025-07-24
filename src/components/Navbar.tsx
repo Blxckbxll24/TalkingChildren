@@ -23,7 +23,7 @@ const adminNavItems: NavItem[] = [
     roles: ['administrador'],
   },
   {
-    name: 'TTS',
+    name: 'Dashboard',
     icon: <MaterialIcons name="play-circle-filled" size={24} />,
     to: 'TTSDashboard',
     roles: ['administrador'],
@@ -32,6 +32,12 @@ const adminNavItems: NavItem[] = [
     name: 'Mensajes',
     icon: <MaterialIcons name="message" size={24} />,
     to: 'Messages',
+    roles: ['administrador'],
+  },
+  {
+    name: 'Usuarios',
+    icon: <MaterialIcons name="people" size={24} />,
+    to: 'Users',
     roles: ['administrador'],
   },
   {
