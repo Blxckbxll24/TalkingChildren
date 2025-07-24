@@ -4,7 +4,7 @@
   "scripts": {
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "start": "expo start",
+    "start": "env ANDROID_HOME=$HOME/Android/Sdk PATH=$HOME/Android/Sdk/platform-tools:$PATH expo start",
     "prebuild": "expo prebuild",
     "lint": "eslint \"**/*.{js,jsx,ts,tsx}\" && prettier -c \"**/*.{js,jsx,ts,tsx,json}\"",
     "format": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix && prettier \"**/*.{js,jsx,ts,tsx,json}\" --write",
@@ -16,6 +16,7 @@
     "@react-native-async-storage/async-storage": "^2.1.2",
     "@react-native-community/datetimepicker": "^8.4.1",
     "@react-native-picker/picker": "^2.11.1",
+    "@react-navigation/bottom-tabs": "^7.4.2",
     "@react-navigation/native": "^7.1.14",
     "@react-navigation/native-stack": "^7.3.21",
     "axios": "^1.11.0",

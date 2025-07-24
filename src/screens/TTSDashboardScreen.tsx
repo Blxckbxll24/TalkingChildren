@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { 
-  View, 
-  Text, 
-  FlatList, 
-  TouchableOpacity, 
-  ActivityIndicator, 
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  ActivityIndicator,
   Alert,
   ScrollView,
-  Platform 
+  Platform,
 } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
 import BottomNavBar from '../components/Navbar';
@@ -16,18 +16,15 @@ import { useAuthStore } from '../stores/authStore';
 import { messageService } from '../services/messageService';
 import { categoryService } from '../services/categoryService';
 import { Message, Category } from '../types/api';
-import { AudioPlayer, useAudioPlayer, useAudioPlayerStatus, setAudioModeAsync, AudioMode } from 'expo-audio';
+import {
+  AudioPlayer,
+  useAudioPlayer,
+  useAudioPlayerStatus,
+  setAudioModeAsync,
+  AudioMode,
+} from 'expo-audio';
 import { authService } from '../services/authService';
-import { 
-  Play, 
-  Volume2, 
-  Heart,
-  HeartOff,
-  Grid,
-  List,
-  Speaker,
-  Pause
-} from 'lucide-react-native';
+import { Play, Volume2, Heart, HeartOff, Grid, List, Speaker, Pause } from 'lucide-react-native';
 
 // Helper function to convert blob to base64
 const blobToBase64 = (blob: Blob): Promise<string> => {
@@ -49,7 +46,7 @@ const TTSDashboardScreen = () => {
   const isDark = theme === 'dark';
   const insets = useSafeAreaInsets();
   const { user } = useAuthStore();
-  
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
@@ -57,7 +54,7 @@ const TTSDashboardScreen = () => {
   const [playingMessage, setPlayingMessage] = useState<number | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [favoriteMessages, setFavoriteMessages] = useState<number[]>([]);
-  
+
   // Audio player
   const audioPlayer = useAudioPlayer();
   const audioStatus = useAudioPlayerStatus(audioPlayer);
@@ -71,7 +68,7 @@ const TTSDashboardScreen = () => {
           playsInSilentMode: true,
         });
         console.log(`✅ Audio session configurada`);
-        
+
         loadData();
       } catch (error) {
         console.error('Error initializing audio:', error);
@@ -87,11 +84,11 @@ const TTSDashboardScreen = () => {
       setLoading(true);
       const [messagesData, categoriesData] = await Promise.all([
         messageService.getAllMessages(),
-        categoryService.getAllCategories()
+        categoryService.getAllCategories(),
       ]);
       setMessages(messagesData);
       setCategories(categoriesData);
-      
+
       // Cargar favoritos del usuario (simulado)
       setFavoriteMessages([1, 3, 5]); // IDs de mensajes favoritos
     } catch (error) {
@@ -102,8 +99,8 @@ const TTSDashboardScreen = () => {
     }
   };
 
-  const filteredMessages = selectedCategory 
-    ? messages.filter(m => m.category_id === selectedCategory)
+  const filteredMessages = selectedCategory
+    ? messages.filter((m) => m.category_id === selectedCategory)
     : messages;
 
   const playTTS = async (message: Message) => {
@@ -128,30 +125,30 @@ const TTSDashboardScreen = () => {
 
       try {
         console.log(`🔊 Intentando reproducir audio para mensaje ${message.id}`);
-        
+
         const token = await authService.getToken();
         if (!token) {
           throw new Error('No hay token de autenticación disponible');
         }
 
         // Detectar la IP correcta para el desarrollo
-        const baseUrl = __DEV__ ? 'http://192.168.0.189:3000' : 'http://localhost:3000';
-        
+        const baseUrl = __DEV__ ? 'http://172.20.10.9:3000' : 'http://localhost:3000';
+
         // Usar la URL directa del audio con token en header
         const audioUrl = `${baseUrl}/api/messages/${message.id}/audio`;
-        
+
         console.log(`🔑 Cargando audio desde: ${audioUrl}`);
 
         try {
           // Método simplificado: usar directamente la URL con autenticación en headers
           // Si expo-audio no soporta headers custom, usar FileSystem como fallback
-          
+
           if (Platform.OS === 'web') {
             // En web, hacer fetch y usar blob
             const response = await fetch(audioUrl, {
               method: 'GET',
               headers: {
-                'Authorization': `Bearer ${token}`,
+                Authorization: `Bearer ${token}`,
               },
             });
 
@@ -162,48 +159,41 @@ const TTSDashboardScreen = () => {
             const arrayBuffer = await response.arrayBuffer();
             const audioBlob = new Blob([arrayBuffer], { type: 'audio/mpeg' });
             const localUrl = URL.createObjectURL(audioBlob);
-            
+
             await audioPlayer.replace(localUrl);
           } else {
             // En mobile, usar expo-file-system para descargar y reproducir
             const FileSystem = require('expo-file-system');
             const tempFileUri = `${FileSystem.documentDirectory}temp_audio_${message.id}.mp3`;
-            
+
             console.log(`📁 Descargando audio a: ${tempFileUri}`);
-            
+
             // Descargar el archivo
-            const downloadResult = await FileSystem.downloadAsync(
-              audioUrl,
-              tempFileUri,
-              {
-                headers: {
-                  'Authorization': `Bearer ${token}`,
-                },
-              }
-            );
-            
+            const downloadResult = await FileSystem.downloadAsync(audioUrl, tempFileUri, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+
             if (downloadResult.status !== 200) {
               throw new Error(`Download failed with status ${downloadResult.status}`);
             }
-            
+
             console.log(`✅ Audio descargado, cargando en reproductor...`);
             await audioPlayer.replace(downloadResult.uri);
           }
-          
+
           console.log(`🎵 Audio cargado, iniciando reproducción...`);
           await audioPlayer.play();
-          
         } catch (audioError) {
           console.error('Error loading audio:', audioError);
           throw audioError; // Re-throw para que se capture en el catch principal
         }
-        
       } catch (audioError) {
         console.error('Error loading audio:', audioError);
         // Fallback
         playFallbackTTS(message);
       }
-      
     } catch (error) {
       console.error('Error playing TTS:', error);
       Alert.alert('Error', 'No se pudo reproducir el mensaje');
@@ -213,18 +203,18 @@ const TTSDashboardScreen = () => {
 
   const playFallbackTTS = (message: Message) => {
     Alert.alert(
-      'Reproduciendo TTS 🔊', 
+      'Reproduciendo TTS 🔊',
       `"${message.text}"\n\nCategoría: ${getCategoryName(message.category_id)}\n\nNota: No se encontró el archivo de audio, mostrando texto solamente.`,
       [
         {
           text: 'Cerrar',
           onPress: () => {
             setPlayingMessage(null);
-          }
-        }
+          },
+        },
       ]
     );
-    
+
     // Simular duración
     const duration = Math.max(3000, message.text.length * 150);
     setTimeout(() => {
@@ -239,9 +229,9 @@ const TTSDashboardScreen = () => {
       playing: audioStatus.playing,
       didJustFinish: audioStatus.didJustFinish,
       duration: audioStatus.duration,
-      currentlyPlaying: playingMessage
+      currentlyPlaying: playingMessage,
     });
-    
+
     // Si el audio se cargó pero no está reproduciendo, intentar reproducir
     if (audioStatus.isLoaded && !audioStatus.playing && playingMessage !== null) {
       console.log(`🔄 Audio cargado pero no reproduciendo, intentando play() de nuevo...`);
@@ -254,7 +244,7 @@ const TTSDashboardScreen = () => {
         }
       }, 200);
     }
-    
+
     if (audioStatus.didJustFinish) {
       console.log(`✅ Audio terminó de reproducirse`);
       setPlayingMessage(null);
@@ -262,51 +252,60 @@ const TTSDashboardScreen = () => {
   }, [audioStatus.didJustFinish, audioStatus.playing, audioStatus.isLoaded, playingMessage]);
 
   const toggleFavorite = (messageId: number) => {
-    setFavoriteMessages(prev => 
-      prev.includes(messageId) 
-        ? prev.filter(id => id !== messageId)
-        : [...prev, messageId]
+    setFavoriteMessages((prev) =>
+      prev.includes(messageId) ? prev.filter((id) => id !== messageId) : [...prev, messageId]
     );
   };
 
   const getCategoryName = (categoryId: number) => {
-    const category = categories.find(c => c.id === categoryId);
+    const category = categories.find((c) => c.id === categoryId);
     return category?.name || 'Sin categoría';
   };
 
   const getCategoryColor = (categoryId: number) => {
-    const colors = ['bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-yellow-500', 'bg-red-500', 'bg-pink-500'];
+    const colors = [
+      'bg-blue-500',
+      'bg-green-500',
+      'bg-purple-500',
+      'bg-yellow-500',
+      'bg-red-500',
+      'bg-pink-500',
+    ];
     return colors[categoryId % colors.length];
   };
 
   const MessageGridItem = ({ item }: { item: Message }) => (
     <TouchableOpacity
       onPress={() => playTTS(item)}
-      className={`rounded-xl p-4 m-2 shadow ${isDark ? 'bg-gray-800' : 'bg-white'}`}
-      style={{ width: '45%' }}
-    >
+      className={`m-2 rounded-xl p-4 shadow ${isDark ? 'bg-gray-800' : 'bg-white'}`}
+      style={{ width: '45%' }}>
       <View className="items-center">
-        <View className={`w-16 h-16 rounded-full items-center justify-center mb-3 ${getCategoryColor(item.category_id)}`}>
+        <View
+          className={`mb-3 h-16 w-16 items-center justify-center rounded-full ${getCategoryColor(item.category_id)}`}>
           {playingMessage === item.id && audioStatus.playing ? (
             <Volume2 size={24} color="#fff" />
           ) : (
             <Play size={24} color="#fff" />
           )}
         </View>
-        
-        <Text className={`text-sm font-bold text-center mb-1 ${isDark ? 'text-white' : 'text-black'}`} numberOfLines={2}>
+
+        <Text
+          className={`mb-1 text-center text-sm font-bold ${isDark ? 'text-white' : 'text-black'}`}
+          numberOfLines={2}>
           {item.text}
         </Text>
-        
-        <Text className={`text-xs text-center mb-2 ${isDark ? 'text-gray-400' : 'text-gray-600'}`} numberOfLines={2}>
+
+        <Text
+          className={`mb-2 text-center text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}
+          numberOfLines={2}>
           {item.category_name || 'Sin categoría'}
         </Text>
-        
-        <View className="flex-row items-center justify-between w-full">
+
+        <View className="w-full flex-row items-center justify-between">
           <Text className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
             {getCategoryName(item.category_id)}
           </Text>
-          
+
           <TouchableOpacity onPress={() => toggleFavorite(item.id)}>
             {favoriteMessages.includes(item.id) ? (
               <Heart size={16} color="#EF4444" fill="#EF4444" />
@@ -322,28 +321,28 @@ const TTSDashboardScreen = () => {
   const MessageListItem = ({ item }: { item: Message }) => (
     <TouchableOpacity
       onPress={() => playTTS(item)}
-      className={`rounded-xl p-4 mb-3 shadow flex-row items-center ${isDark ? 'bg-gray-800' : 'bg-white'}`}
-    >
-      <View className={`w-12 h-12 rounded-full items-center justify-center mr-4 ${getCategoryColor(item.category_id)}`}>
+      className={`mb-3 flex-row items-center rounded-xl p-4 shadow ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
+      <View
+        className={`mr-4 h-12 w-12 items-center justify-center rounded-full ${getCategoryColor(item.category_id)}`}>
         {playingMessage === item.id && audioStatus.playing ? (
           <Volume2 size={20} color="#fff" />
         ) : (
           <Play size={20} color="#fff" />
         )}
       </View>
-      
-      <View className="flex-1 mr-3">
-        <Text className={`font-bold mb-1 ${isDark ? 'text-white' : 'text-black'}`}>
+
+      <View className="mr-3 flex-1">
+        <Text className={`mb-1 font-bold ${isDark ? 'text-white' : 'text-black'}`}>
           {item.text}
         </Text>
         <Text className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`} numberOfLines={2}>
           {item.category_name || 'Sin categoría'}
         </Text>
-        <Text className={`text-xs mt-1 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
+        <Text className={`mt-1 text-xs ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
           {getCategoryName(item.category_id)}
         </Text>
       </View>
-      
+
       <TouchableOpacity onPress={() => toggleFavorite(item.id)}>
         {favoriteMessages.includes(item.id) ? (
           <Heart size={20} color="#EF4444" fill="#EF4444" />
@@ -357,17 +356,17 @@ const TTSDashboardScreen = () => {
   const CategoryFilter = ({ category }: { category: Category }) => (
     <TouchableOpacity
       onPress={() => setSelectedCategory(selectedCategory === category.id ? null : category.id)}
-      className={`rounded-full px-4 py-2 mr-3 ${
-        selectedCategory === category.id 
-          ? 'bg-blue-500' 
-          : isDark ? 'bg-gray-700' : 'bg-gray-200'
-      }`}
-    >
-      <Text className={`font-semibold ${
-        selectedCategory === category.id 
-          ? 'text-white' 
-          : isDark ? 'text-gray-300' : 'text-gray-700'
+      className={`mr-3 rounded-full px-4 py-2 ${
+        selectedCategory === category.id ? 'bg-blue-500' : isDark ? 'bg-gray-700' : 'bg-gray-200'
       }`}>
+      <Text
+        className={`font-semibold ${
+          selectedCategory === category.id
+            ? 'text-white'
+            : isDark
+              ? 'text-gray-300'
+              : 'text-gray-700'
+        }`}>
         {category.name}
       </Text>
     </TouchableOpacity>
@@ -375,11 +374,9 @@ const TTSDashboardScreen = () => {
 
   if (loading) {
     return (
-      <View className={`flex-1 justify-center items-center ${isDark ? 'bg-gray-900' : 'bg-white'}`}>
+      <View className={`flex-1 items-center justify-center ${isDark ? 'bg-gray-900' : 'bg-white'}`}>
         <ActivityIndicator size="large" color={isDark ? '#fff' : '#000'} />
-        <Text className={`mt-4 ${isDark ? 'text-white' : 'text-black'}`}>
-          Cargando mensajes...
-        </Text>
+        <Text className={`mt-4 ${isDark ? 'text-white' : 'text-black'}`}>Cargando mensajes...</Text>
       </View>
     );
   }
@@ -387,11 +384,10 @@ const TTSDashboardScreen = () => {
   return (
     <View
       className={`flex-1 ${isDark ? 'bg-gray-900' : 'bg-white'}`}
-      style={{ paddingTop: insets.top }}
-    >
+      style={{ paddingTop: insets.top }}>
       <View className="px-6 pt-6">
         {/* Header */}
-        <View className="flex-row justify-between items-center mb-6">
+        <View className="mb-6 flex-row items-center justify-between">
           <View>
             <Text className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-black'}`}>
               🎵 TTS Dashboard
@@ -402,12 +398,11 @@ const TTSDashboardScreen = () => {
               {user?.role_name === 'administrador' && 'Todos los mensajes'}
             </Text>
           </View>
-          
+
           <View className="flex-row">
             <TouchableOpacity
               onPress={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
-              className={`p-2 rounded-lg ${isDark ? 'bg-gray-800' : 'bg-gray-100'}`}
-            >
+              className={`rounded-lg p-2 ${isDark ? 'bg-gray-800' : 'bg-gray-100'}`}>
               {viewMode === 'grid' ? (
                 <List size={20} color={isDark ? '#fff' : '#000'} />
               ) : (
@@ -418,29 +413,28 @@ const TTSDashboardScreen = () => {
         </View>
 
         {/* Filtros de categoría */}
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false} 
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
           className="mb-6"
-          contentContainerStyle={{ paddingRight: 24 }}
-        >
+          contentContainerStyle={{ paddingRight: 24 }}>
           <TouchableOpacity
             onPress={() => setSelectedCategory(null)}
-            className={`rounded-full px-4 py-2 mr-3 ${
-              selectedCategory === null 
-                ? 'bg-blue-500' 
-                : isDark ? 'bg-gray-700' : 'bg-gray-200'
-            }`}
-          >
-            <Text className={`font-semibold ${
-              selectedCategory === null 
-                ? 'text-white' 
-                : isDark ? 'text-gray-300' : 'text-gray-700'
+            className={`mr-3 rounded-full px-4 py-2 ${
+              selectedCategory === null ? 'bg-blue-500' : isDark ? 'bg-gray-700' : 'bg-gray-200'
             }`}>
+            <Text
+              className={`font-semibold ${
+                selectedCategory === null
+                  ? 'text-white'
+                  : isDark
+                    ? 'text-gray-300'
+                    : 'text-gray-700'
+              }`}>
               Todos
             </Text>
           </TouchableOpacity>
-          
+
           {categories.map((category) => (
             <CategoryFilter key={category.id} category={category} />
           ))}
@@ -454,16 +448,18 @@ const TTSDashboardScreen = () => {
           renderItem={MessageGridItem}
           keyExtractor={(item: Message) => item.id.toString()}
           numColumns={2}
+          key={`grid-${2}`} // Usa el valor de numColumns aquí
           contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 100 }}
           columnWrapperStyle={{ justifyContent: 'space-between' }}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={() => (
-            <View className="flex-1 justify-center items-center py-20">
+            <View className="flex-1 items-center justify-center py-20">
               <Speaker size={48} color={isDark ? '#4B5563' : '#D1D5DB'} />
-              <Text className={`text-lg font-semibold mt-4 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+              <Text
+                className={`mt-4 text-lg font-semibold ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                 No hay mensajes disponibles
               </Text>
-              <Text className={`text-center mt-2 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+              <Text className={`mt-2 text-center ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
                 {selectedCategory ? 'Selecciona otra categoría' : 'Aún no hay mensajes creados'}
               </Text>
             </View>
@@ -477,12 +473,13 @@ const TTSDashboardScreen = () => {
           contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 100 }}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={() => (
-            <View className="flex-1 justify-center items-center py-20">
+            <View className="flex-1 items-center justify-center py-20">
               <Speaker size={48} color={isDark ? '#4B5563' : '#D1D5DB'} />
-              <Text className={`text-lg font-semibold mt-4 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+              <Text
+                className={`mt-4 text-lg font-semibold ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                 No hay mensajes disponibles
               </Text>
-              <Text className={`text-center mt-2 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+              <Text className={`mt-2 text-center ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
                 {selectedCategory ? 'Selecciona otra categoría' : 'Aún no hay mensajes creados'}
               </Text>
             </View>

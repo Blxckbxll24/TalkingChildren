@@ -5,7 +5,7 @@ import Toast from 'react-native-toast-message';
 // Configuración de la API
 // Para React Native/Expo necesitamos usar la IP de la máquina, no localhost
 const API_BASE_URL = __DEV__
-    ? 'http://192.168.0.189:3000/api'  // IP de tu máquina Windows
+    ? 'http://172.20.10.9:3000/api'  // IP de tu máquina Windows
     : 'https://tu-dominio-produccion.com/api';
 
 class ApiClient {
