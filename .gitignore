@@ -31,6 +31,8 @@ logs/
 # Build artifacts
 build/
 .gradle/
+*/build/
+local.properties
 
 # IDE y editores
 .vscode/
@@ -55,9 +57,13 @@ Thumbs.db
 .env.test.local
 .env.production.local
 
-# React Native
-ios/
-android/
+# React Native original (keeping for reference)
+# ios/
+# android/
+
+# Android Wear OS artifacts
+wear/build/
+.gradle/
 
 # Debugging
 *.hprof

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TalkingChildren</string>
+    
+    <!-- Categories -->
+    <string name="category_basic">Básico</string>
+    <string name="category_emotions">Emociones</string>
+    <string name="category_needs">Necesidades</string>
+    
+    <!-- Basic messages -->
+    <string name="msg_basic_hello">Hola, buenos días</string>
+    <string name="msg_basic_help">Necesito ayuda</string>
+    <string name="msg_basic_thanks">Muchas gracias</string>
+    
+    <!-- Emotion messages -->
+    <string name="msg_emotion_happy">Me siento feliz</string>
+    <string name="msg_emotion_support">Necesito apoyo</string>
+    <string name="msg_emotion_grateful">Estoy agradecido</string>
+    
+    <!-- Need messages -->
+    <string name="msg_need_bathroom">Necesito ir al baño</string>
+    <string name="msg_need_hungry">Tengo hambre</string>
+    <string name="msg_need_thirsty">Tengo sed</string>
+    
+    <!-- Audio controls -->
+    <string name="record_audio">Grabar Audio</string>
+    <string name="play_audio">Reproducir</string>
+    <string name="stop_recording">Detener</string>
+    <string name="recording">Grabando...</string>
+    <string name="playing">Reproduciendo...</string>
+    
+    <!-- Permissions -->
+    <string name="permission_audio_required">Se requiere permiso de audio para grabar mensajes</string>
+    <string name="permission_storage_required">Se requiere permiso de almacenamiento para guardar audios</string>
+</resources>
