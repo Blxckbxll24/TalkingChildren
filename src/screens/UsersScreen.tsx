@@ -12,6 +12,10 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MaterialIcons, Feather } from '@expo/vector-icons';
 import { useThemeStore } from '../stores/themeStore';
+import { API_URL } from '@env';
+
+// Configuración de la URL base
+const API_BASE_URL = __DEV__ ? `http://${API_URL}/api` : 'https://tu-dominio-produccion.com/api';
 
 interface User {
   id: number;
@@ -131,7 +135,7 @@ const UsersScreen: React.FC = () => {
       return;
     }
 
-    const userService = new UserService('http://localhost:3000/api', authToken);
+    const userService = new UserService(API_BASE_URL, authToken);
     setLoading(true);
     setError(null);
     try {
@@ -156,7 +160,7 @@ const UsersScreen: React.FC = () => {
       return;
     }
 
-    const userService = new UserService('http://localhost:3000/api', authToken);
+    const userService = new UserService(API_BASE_URL, authToken);
     setLoading(true);
     try {
       if (editingUser) {
@@ -198,7 +202,7 @@ const UsersScreen: React.FC = () => {
             return;
           }
 
-          const userService = new UserService('http://localhost:3000/api', authToken);
+          const userService = new UserService(API_BASE_URL, authToken);
           setLoading(true);
           try {
             await userService.delete(user.id);

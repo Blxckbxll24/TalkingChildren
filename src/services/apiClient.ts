@@ -1,11 +1,11 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
+import { API_URL } from '@env';
 
-// Configuración de la API
-// Para React Native/Expo necesitamos usar la IP de la máquina, no localhost
+console.log('API_URL:', API_URL);
 const API_BASE_URL = __DEV__
-    ? 'http://172.20.10.9:3000/api'  // IP de tu máquina Windows
+    ? `http://${API_URL}/api`
     : 'https://tu-dominio-produccion.com/api';
 
 class ApiClient {

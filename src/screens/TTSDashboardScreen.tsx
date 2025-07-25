@@ -16,30 +16,10 @@ import { useAuthStore } from '../stores/authStore';
 import { messageService } from '../services/messageService';
 import { categoryService } from '../services/categoryService';
 import { Message, Category } from '../types/api';
-import {
-  AudioPlayer,
-  useAudioPlayer,
-  useAudioPlayerStatus,
-  setAudioModeAsync,
-  AudioMode,
-} from 'expo-audio';
+import { API_URL } from '@env';
+import { useAudioPlayer, useAudioPlayerStatus, setAudioModeAsync } from 'expo-audio';
 import { authService } from '../services/authService';
-import { Play, Volume2, Heart, HeartOff, Grid, List, Speaker, Pause } from 'lucide-react-native';
-
-// Helper function to convert blob to base64
-const blobToBase64 = (blob: Blob): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result as string;
-      // Remove the data:application/octet-stream;base64, prefix
-      const base64 = result.split(',')[1];
-      resolve(base64);
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(blob);
-  });
-};
+import { Play, Volume2, Heart, HeartOff, Grid, List, Speaker } from 'lucide-react-native';
 
 const TTSDashboardScreen = () => {
   const { theme } = useTheme();
@@ -131,8 +111,8 @@ const TTSDashboardScreen = () => {
           throw new Error('No hay token de autenticación disponible');
         }
 
-        // Detectar la IP correcta para el desarrollo
-        const baseUrl = __DEV__ ? 'http://172.20.10.9:3000' : 'http://localhost:3000';
+        // Usar la URL de la variable de entorno
+        const baseUrl = __DEV__ ? `http://${API_URL}` : 'https://tu-dominio-produccion.com';
 
         // Usar la URL directa del audio con token en header
         const audioUrl = `${baseUrl}/api/messages/${message.id}/audio`;
@@ -160,7 +140,7 @@ const TTSDashboardScreen = () => {
             const audioBlob = new Blob([arrayBuffer], { type: 'audio/mpeg' });
             const localUrl = URL.createObjectURL(audioBlob);
 
-            await audioPlayer.replace(localUrl);
+            audioPlayer.replace(localUrl);
           } else {
             // En mobile, usar expo-file-system para descargar y reproducir
             const FileSystem = require('expo-file-system');
@@ -235,9 +215,9 @@ const TTSDashboardScreen = () => {
     // Si el audio se cargó pero no está reproduciendo, intentar reproducir
     if (audioStatus.isLoaded && !audioStatus.playing && playingMessage !== null) {
       console.log(`🔄 Audio cargado pero no reproduciendo, intentando play() de nuevo...`);
-      setTimeout(async () => {
+      setTimeout(() => {
         try {
-          await audioPlayer.play();
+          audioPlayer.play();
           console.log(`✅ Reproducción iniciada después de retry`);
         } catch (error) {
           console.error(`❌ Error en retry de reproducción:`, error);
