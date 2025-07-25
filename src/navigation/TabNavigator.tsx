@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useAuthStore } from '../stores/authStore';
 import { useThemeStore } from '../stores/themeStore';
 import BottomNavBar from '../components/Navbar';
+import ProtectedRoute from '../components/ProtectedRoute';
 
 // Screens
 import HomeScreen from '../screens/HomeScreen';
@@ -34,6 +35,15 @@ const TabNavigator = () => {
   const { theme } = useThemeStore();
   const userRole = user?.role_name?.toLowerCase();
 
+  console.log('🔍 TabNavigator - User:', user);
+  console.log('🔍 TabNavigator - User role:', userRole);
+  console.log('🔍 TabNavigator - Renderizando pantallas para:', userRole || 'sin rol');
+
+  // Si no hay usuario, mostrar pantallas por defecto
+  if (!user) {
+    console.log('🔍 TabNavigator - Sin usuario, mostrando pantallas por defecto');
+  }
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -46,46 +56,69 @@ const TabNavigator = () => {
       initialRouteName={
         userRole === 'administrador' || userRole === 'tutor' ? 'Dashboard' : 'Home'
       }>
-      {/* Pantallas para administradores */}
-      {userRole === 'administrador' && (
-        <>
-          <Tab.Screen name="Dashboard" component={DashboardScreen} />
-          <Tab.Screen name="TTSDashboard" component={TTSDashboardScreen} />
-          <Tab.Screen name="Messages" component={MessagesScreen} />
-          <Tab.Screen name="Users" component={UsersScreen} />
-          <Tab.Screen name="Settings" component={SettingsScreen} />
-          <Tab.Screen name="Profile" component={ProfileScreen} />
-        </>
-      )}
+      {/* Cargar todas las pantallas para evitar errores de navegación */}
+      {/* El control de acceso se maneja en el BottomNavBar y ProtectedRoute */}
 
-      {/* Pantallas para tutores */}
-      {userRole === 'tutor' && (
-        <>
-          <Tab.Screen name="Dashboard" component={DashboardScreen} />
-          <Tab.Screen name="TTSDashboard" component={TTSDashboardScreen} />
-          <Tab.Screen name="Messages" component={MessagesScreen} />
-          <Tab.Screen name="ChildrenManagement" component={ChildrenManagementScreen} />
-          <Tab.Screen name="Profile" component={ProfileScreen} />
-        </>
-      )}
+      {/* Pantallas comunes */}
+      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="TTSDashboard" component={TTSDashboardScreen} />
 
-      {/* Pantallas para niños */}
-      {userRole === 'niño' && (
-        <>
-          <Tab.Screen name="Home" component={HomeScreen} />
-          <Tab.Screen name="TTSDashboard" component={TTSDashboardScreen} />
-          <Tab.Screen name="MyMessages" component={MyMessagesScreen} />
-          <Tab.Screen name="Profile" component={ProfileScreen} />
-        </>
-      )}
+      {/* Pantallas de administrador y tutor */}
+      <Tab.Screen
+        name="Dashboard"
+        component={() => (
+          <ProtectedRoute allowedRoles={['administrador', 'tutor']}>
+            <DashboardScreen />
+          </ProtectedRoute>
+        )}
+      />
+      <Tab.Screen
+        name="Messages"
+        component={() => (
+          <ProtectedRoute allowedRoles={['administrador', 'tutor']}>
+            <MessagesScreen />
+          </ProtectedRoute>
+        )}
+      />
 
-      {/* Pantallas por defecto */}
-      {!userRole && (
-        <>
-          <Tab.Screen name="Home" component={HomeScreen} />
-          <Tab.Screen name="Profile" component={ProfileScreen} />
-        </>
-      )}
+      {/* Pantallas específicas de administrador */}
+      <Tab.Screen
+        name="Users"
+        component={() => (
+          <ProtectedRoute allowedRoles={['administrador']}>
+            <UsersScreen />
+          </ProtectedRoute>
+        )}
+      />
+      <Tab.Screen
+        name="Settings"
+        component={() => (
+          <ProtectedRoute allowedRoles={['administrador']}>
+            <SettingsScreen />
+          </ProtectedRoute>
+        )}
+      />
+
+      {/* Pantallas específicas de tutor */}
+      <Tab.Screen
+        name="ChildrenManagement"
+        component={() => (
+          <ProtectedRoute allowedRoles={['tutor']}>
+            <ChildrenManagementScreen />
+          </ProtectedRoute>
+        )}
+      />
+
+      {/* Pantallas específicas de niños */}
+      <Tab.Screen
+        name="MyMessages"
+        component={() => (
+          <ProtectedRoute allowedRoles={['niño']}>
+            <MyMessagesScreen />
+          </ProtectedRoute>
+        )}
+      />
     </Tab.Navigator>
   );
 };

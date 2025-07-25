@@ -1,16 +1,17 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useEffect } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
-import type { TabParamList } from '../navigation/TabNavigator';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../navigation/AdaptiveAppNavigator';
 import { MaterialIcons, Feather } from '@expo/vector-icons';
 import { useAuthStore } from '../stores/authStore';
+import Toast from 'react-native-toast-message';
 
 interface NavItem {
   name: string;
   icon: React.ReactNode;
-  to: keyof TabParamList;
+  to: keyof RootStackParamList;
   roles: string[]; // Roles que pueden ver este item
 }
 
@@ -107,23 +108,55 @@ interface BottomNavBarProps {
 
 const BottomNavBar: React.FC<BottomNavBarProps> = ({ theme }) => {
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation<BottomTabNavigationProp<TabParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const route = useRoute();
   const isDark = theme === 'dark';
   const { user } = useAuthStore();
+
+  // Debug effect to monitor user changes
+  useEffect(() => {
+    console.log('🔍 BottomNavBar - User changed:', user);
+    console.log('🔍 BottomNavBar - Current route:', route.name);
+  }, [user, route.name]);
+
+  // Función para verificar si una pantalla está disponible para el rol actual
+  const isScreenAvailable = useCallback(
+    (screenName: keyof RootStackParamList): boolean => {
+      const userRole = user?.role_name?.toLowerCase();
+
+      // Mapeo de pantallas por rol
+      const screensByRole: Record<string, (keyof RootStackParamList)[]> = {
+        administrador: ['Dashboard', 'TTSDashboard', 'Messages', 'Users', 'Settings', 'Profile'],
+        tutor: ['Dashboard', 'TTSDashboard', 'Messages', 'ChildrenManagement', 'Profile'],
+        niño: ['Home', 'TTSDashboard', 'MyMessages', 'Profile'],
+        guest: ['Home', 'Profile'],
+      };
+
+      const availableScreens = screensByRole[userRole || 'guest'] || screensByRole['guest'];
+      return availableScreens.includes(screenName);
+    },
+    [user?.role_name]
+  );
 
   // Obtener los elementos de navegación según el rol del usuario
   const getNavItems = useCallback((): NavItem[] => {
     const userRole = user?.role_name?.toLowerCase();
 
+    console.log('🔍 Debug Navbar - User role:', userRole);
+    console.log('🔍 Debug Navbar - User object:', user);
+
     switch (userRole) {
       case 'administrador':
+        console.log('📋 Mostrando navegación de administrador');
         return adminNavItems;
       case 'tutor':
+        console.log('📋 Mostrando navegación de tutor');
         return tutorNavItems;
       case 'niño':
+        console.log('📋 Mostrando navegación de niño');
         return childNavItems;
       default:
+        console.log('📋 Mostrando navegación por defecto - Rol no reconocido:', userRole);
         // Si no hay rol o es desconocido, mostrar navegación básica
         return [
           {
@@ -140,19 +173,78 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({ theme }) => {
           },
         ];
     }
-  }, [user?.role_name]);
+  }, [user]);
 
   const navItems = useMemo(() => getNavItems(), [getNavItems]);
 
   const handleNavigation = useCallback(
-    (screenName: keyof TabParamList) => {
+    (screenName: keyof RootStackParamList) => {
+      console.log('🚀 Intentando navegar a:', String(screenName));
+      console.log('📍 Pantalla actual:', route.name);
+      console.log('👤 Rol de usuario:', user?.role_name?.toLowerCase());
+
+      // Si no hay usuario, no permitir navegación a pantallas protegidas
+      if (!user) {
+        console.error('❌ No hay usuario autenticado');
+        Toast.show({
+          type: 'error',
+          text1: 'Error de Autenticación',
+          text2: 'Debes iniciar sesión para acceder a esta pantalla',
+        });
+        return;
+      }
+
+      // Primera verificación: usar la función de disponibilidad de pantalla
+      if (!isScreenAvailable(screenName)) {
+        console.error('❌ Pantalla no disponible según mapeo de roles:', String(screenName));
+        console.error('👤 Rol actual:', user?.role_name?.toLowerCase());
+        Toast.show({
+          type: 'error',
+          text1: 'Acceso Denegado',
+          text2: `La pantalla "${String(screenName)}" no está disponible para tu rol "${user?.role_name}"`,
+        });
+        return;
+      }
+
+      // Segunda verificación: usar los elementos de navegación actuales
+      const currentNavItems = getNavItems();
+      const targetItem = currentNavItems.find((item) => item.to === screenName);
+
+      if (!targetItem) {
+        console.error('❌ Pantalla no encontrada en elementos de navegación:', String(screenName));
+        console.error(
+          '📋 Pantallas disponibles:',
+          currentNavItems.map((item) => item.to)
+        );
+        Toast.show({
+          type: 'error',
+          text1: 'Error de Navegación',
+          text2: 'Esta pantalla no está disponible en este momento',
+        });
+        return;
+      }
+
       if (route.name !== screenName) {
-        navigation.navigate(screenName);
+        console.log(`✅ Navegando de ${String(route.name)} a ${String(screenName)}`);
+
+        // Verificación adicional: comprobar si la ruta existe en el navigator
+        try {
+          navigation.navigate(screenName as any);
+          console.log('✅ Navegación exitosa a:', String(screenName));
+        } catch (error) {
+          console.error('❌ Error de navegación:', error);
+          Toast.show({
+            type: 'error',
+            text1: 'Error de Navegación',
+            text2: `No se pudo navegar a ${String(screenName)}. Error: ${error}`,
+          });
+        }
+      } else {
+        console.log('ℹ️ Ya estás en la pantalla:', String(screenName));
       }
     },
-    [navigation, route.name]
+    [navigation, route.name, user, getNavItems, isScreenAvailable]
   );
-
   return (
     <View
       className={`${isDark ? 'bg-gray-900' : 'bg-white'}`}

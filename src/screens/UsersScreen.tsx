@@ -13,6 +13,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MaterialIcons, Feather } from '@expo/vector-icons';
 import { useThemeStore } from '../stores/themeStore';
 import { API_URL } from '@env';
+import BottomNavBar from '../components/Navbar';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // Configuración de la URL base
 const API_BASE_URL = __DEV__ ? `http://${API_URL}/api` : 'https://tu-dominio-produccion.com/api';
@@ -97,9 +99,10 @@ class UserService {
   }
 }
 
-const UsersScreen: React.FC = () => {
+const UsersScreen = () => {
   const { theme } = useThemeStore();
   const isDark = theme === 'dark';
+  const insets = useSafeAreaInsets();
 
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
@@ -252,7 +255,7 @@ const UsersScreen: React.FC = () => {
   return (
     <View className={`flex-1 ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
       {/* Header */}
-      <View className={`px-6 py-4 ${isDark ? 'bg-gray-800' : 'bg-white'} shadow-sm`}>
+      <View className={`px-10 py-20 shadow-sm`}>
         <View className="flex-row items-center justify-between">
           <Text className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
             Gestión de Usuarios
@@ -270,78 +273,100 @@ const UsersScreen: React.FC = () => {
       </View>
 
       {/* Content */}
-      <ScrollView className="flex-1 px-6 py-4">
-        {loading && (
-          <View className="flex-1 items-center justify-center py-8">
-            <ActivityIndicator size="large" color="#3b82f6" />
-            <Text className={`mt-2 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-              Cargando usuarios...
-            </Text>
-          </View>
-        )}
+      <View className="flex-1">
+        <ScrollView
+          className="flex-1 px-6 py-[-50px]"
+          contentContainerStyle={{ paddingBottom: 100 }}
+          showsVerticalScrollIndicator={false}>
+          {loading && (
+            <View className="flex-1 items-center justify-center py-8">
+              <ActivityIndicator size="large" color="#3b82f6" />
+              <Text className={`mt-2 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                Cargando usuarios...
+              </Text>
+            </View>
+          )}
 
-        {error && (
-          <View className="mb-4 rounded-lg border border-red-400 bg-red-100 p-4">
-            <Text className="text-red-700">{error}</Text>
-            <TouchableOpacity onPress={fetchUsers} className="mt-2">
-              <Text className="font-medium text-red-600">Reintentar</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+          {error && (
+            <View className="mb-4 rounded-lg border border-red-400 bg-red-100 p-4">
+              <Text className="text-red-700">{error}</Text>
+              <TouchableOpacity onPress={fetchUsers} className="mt-2">
+                <Text className="font-medium text-red-600">Reintentar</Text>
+              </TouchableOpacity>
+            </View>
+          )}
 
-        {!loading &&
-          !error &&
-          users.map((user) => (
-            <View
-              key={user.id}
-              className={`mb-4 rounded-lg p-4 shadow-sm ${
-                isDark ? 'border border-gray-700 bg-gray-800' : 'border border-gray-200 bg-white'
-              }`}>
-              <View className="flex-row items-center justify-between">
-                <View className="flex-1">
-                  <Text
-                    className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                    {user.name}
-                  </Text>
-                  <Text className={`${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                    {user.email}
-                  </Text>
-                  <View className="mt-1 flex-row items-center">
-                    <MaterialIcons name="badge" size={16} color={isDark ? '#9ca3af' : '#6b7280'} />
-                    <Text className={`ml-1 text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                      {getRoleName(user.role_id)}
+          {!loading &&
+            !error &&
+            users.map((user) => (
+              <View
+                key={user.id}
+                className={`mb-4 rounded-lg p-4 shadow-sm ${
+                  isDark ? 'border border-gray-700 bg-gray-800' : 'border border-gray-200 bg-white'
+                }`}>
+                <View className="flex-row items-center justify-between">
+                  <View className="flex-1">
+                    <Text
+                      className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                      {user.name}
                     </Text>
+                    <Text className={`${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                      {user.email}
+                    </Text>
+                    <View className="mt-1 flex-row items-center">
+                      <MaterialIcons
+                        name="badge"
+                        size={16}
+                        color={isDark ? '#9ca3af' : '#6b7280'}
+                      />
+                      <Text
+                        className={`ml-1 text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                        {getRoleName(user.role_id)}
+                      </Text>
+                    </View>
+                  </View>
+                  <View className="flex-row items-center space-x-2">
+                    <TouchableOpacity
+                      onPress={() => handleEditUser(user)}
+                      className="mr-2 rounded-lg bg-blue-100 p-2">
+                      <Feather name="edit-2" size={18} color="#3b82f6" />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => handleDeleteUser(user)}
+                      className="rounded-lg bg-red-100 p-2">
+                      <MaterialIcons name="delete" size={18} color="#ef4444" />
+                    </TouchableOpacity>
                   </View>
                 </View>
-                <View className="flex-row items-center space-x-2">
-                  <TouchableOpacity
-                    onPress={() => handleEditUser(user)}
-                    className="rounded-lg bg-blue-100 p-2">
-                    <Feather name="edit-2" size={18} color="#3b82f6" />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => handleDeleteUser(user)}
-                    className="rounded-lg bg-red-100 p-2">
-                    <MaterialIcons name="delete" size={18} color="#ef4444" />
-                  </TouchableOpacity>
-                </View>
               </View>
-            </View>
-          ))}
+            ))}
 
-        {!loading && !error && users.length === 0 && (
-          <View className="flex-1 items-center justify-center py-12">
-            <MaterialIcons name="people" size={64} color={isDark ? '#6b7280' : '#9ca3af'} />
-            <Text
-              className={`mt-4 text-lg font-medium ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-              No hay usuarios registrados
-            </Text>
-            <Text className={`mt-2 text-center ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
-              Crea el primer usuario usando el botón &quot;Nuevo&quot;
-            </Text>
-          </View>
-        )}
-      </ScrollView>
+          {!loading && !error && users.length === 0 && (
+            <View className="flex-1 items-center justify-center py-12">
+              <MaterialIcons name="people" size={64} color={isDark ? '#6b7280' : '#9ca3af'} />
+              <Text
+                className={`mt-4 text-lg font-medium ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                No hay usuarios registrados
+              </Text>
+              <Text className={`mt-2 text-center ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
+                Crea el primer usuario usando el botón &quot;Nuevo&quot;
+              </Text>
+            </View>
+          )}
+        </ScrollView>
+      </View>
+
+      {/* Bottom Navigation Bar - Fixed at bottom */}
+      <View
+        style={{
+          position: 'absolute',
+          bottom: -30,
+          left: 0,
+          right: 0,
+          paddingBottom: insets.bottom,
+        }}>
+        <BottomNavBar theme={theme} />
+      </View>
 
       {/* Modal para crear/editar usuario */}
       <Modal

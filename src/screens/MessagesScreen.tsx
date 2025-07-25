@@ -22,6 +22,7 @@ import { Message, Category, CreateMessageDTO, UpdateMessageDTO } from '../types/
 import { useAudioPlayer, useAudioPlayerStatus, setAudioModeAsync } from 'expo-audio';
 import { authService } from '../services/authService';
 import { API_URL } from '@env';
+import { Plus } from 'lucide-react-native';
 
 const MessagesScreen = () => {
   const audioPlayer = useAudioPlayer();
@@ -399,7 +400,7 @@ const MessagesScreen = () => {
         <View className="mb-6 flex-row items-center justify-between">
           <View>
             <Text className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-black'}`}>
-              💬 Mensajes
+              Mensajes
             </Text>
             <Text className={`text-lg ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
               Gestión de mensajes con audio
@@ -407,8 +408,8 @@ const MessagesScreen = () => {
           </View>
 
           {canCreateMessages && (
-            <TouchableOpacity onPress={openCreateModal} className="rounded-xl bg-blue-500 p-3">
-              <Text style={{ fontSize: 24, color: '#fff' }}>➕</Text>
+            <TouchableOpacity onPress={openCreateModal} className="rounded-full bg-blue-500 p-3">
+              <Plus size={24} color="#fff" />
             </TouchableOpacity>
           )}
         </View>

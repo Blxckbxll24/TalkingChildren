@@ -370,7 +370,7 @@ const TTSDashboardScreen = () => {
         <View className="mb-6 flex-row items-center justify-between">
           <View>
             <Text className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-black'}`}>
-              🎵 Dashboard
+              Dashboard
             </Text>
             <Text className={`text-lg ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
               {user?.role_name === 'niño' && `¡Hola ${user.name}!`}
