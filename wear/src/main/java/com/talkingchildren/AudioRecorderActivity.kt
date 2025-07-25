@@ -106,13 +106,13 @@ class AudioRecorderActivity : AppCompatActivity() {
     }
     
     private fun startPlayback() {
-        if (audioManager.startPlayback(categoryId, messageIndex) {
+        if (audioManager.startPlayback(categoryId, messageIndex, onComplete = {
                 // Callback when playback completes
                 runOnUiThread {
                     isPlaying = false
                     updateUI()
                 }
-            }) {
+            })) {
             isPlaying = true
             updateUI()
         }
