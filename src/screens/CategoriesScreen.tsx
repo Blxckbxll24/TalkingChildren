@@ -41,7 +41,7 @@ const CategoriesScreen = () => {
   });
 
   // Verificar si el usuario puede crear/editar categorías
-  const canManageCategories = user?.role_name === 'admin' || user?.role_name === 'tutor';
+  const canManageCategories = user?.role_name === 'administrador' || user?.role_name === 'tutor';
 
   useEffect(() => {
     loadCategories();
@@ -172,7 +172,7 @@ const CategoriesScreen = () => {
               <Edit size={16} color="#fff" />
             </TouchableOpacity>
             
-            {user?.role_name === 'admin' && (
+            {user?.role_name === 'administrador' && (
               <TouchableOpacity
                 onPress={() => handleDeleteCategory(item)}
                 className="p-2 rounded-lg bg-red-500"

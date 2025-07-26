@@ -21,6 +21,11 @@ import TTSDashboardScreen from '../screens/TTSDashboardScreen';
 import ChildrenManagementScreen from '../screens/ChildrenManagementScreen';
 import MessageAssignmentScreen from '../screens/MessageAssignmentScreen';
 import UsersScreen from '../screens/UsersScreen';
+import AudioMessagesScreen from '../screens/AudioMessagesScreen';
+import ButtonMessagesScreen from '../screens/ButtonMessagesScreen';
+import ESP32AdminControlScreen from '../screens/ESP32AdminControlScreen';
+import ESP32MonitorScreen from '../screens/ESP32MonitorScreen';
+import ESP32MonitorBridge from '../screens/ESP32MonitorBridge';
 
 // Pantallas PC (admin/tutor)
 import LoginScreenPC from '../screens/pc/LoginScreenPC';
@@ -57,6 +62,10 @@ export type RootStackParamList = {
   ChildMessagesView: { childId: number; childName: string };
   AssignMessages: { childId: number; childName: string };
   ESP32Control: undefined;
+  ESP32Monitor: undefined;
+  ESP32MonitorBridge: undefined;
+  AudioMessages: undefined;
+  ButtonMessages: undefined;
   TTSSettings: undefined;
   Statistics: undefined;
   Users: undefined;
@@ -81,7 +90,7 @@ const AdaptiveAppNavigator = () => {
       return 'SmartWatchHome';
     }
 
-    if (isDesktop && (user?.role_name === 'admin' || user?.role_name === 'tutor')) {
+    if (isDesktop && (user?.role_name === 'administrador' || user?.role_name === 'tutor')) {
       return 'Dashboard';
     }
 
@@ -97,7 +106,7 @@ const AdaptiveAppNavigator = () => {
       case 'Dashboard':
         if (isSmartwatch) {
           return SmartWatchHomeScreen;
-        } else if (isDesktop && (user?.role_name === 'admin' || user?.role_name === 'tutor')) {
+        } else if (isDesktop && (user?.role_name === 'administrador' || user?.role_name === 'tutor')) {
           return DashboardScreenPC;
         }
         return DashboardScreen;
@@ -129,7 +138,7 @@ const AdaptiveAppNavigator = () => {
           {isSmartwatch ? (
             // Navegación para smartwatch (niños)
             <Stack.Screen name="SmartWatchHome" component={SmartWatchHomeScreen} />
-          ) : isDesktop && (user?.role_name === 'admin' || user?.role_name === 'tutor') ? (
+          ) : isDesktop && (user?.role_name === 'administrador' || user?.role_name === 'tutor') ? (
             // Navegación para PC (admin/tutor)
             <>
               <Stack.Screen name="Dashboard" component={DashboardScreenPC} />
@@ -137,6 +146,9 @@ const AdaptiveAppNavigator = () => {
               <Stack.Screen name="ChildrenManagement" component={ChildrenManagementScreen} />
               <Stack.Screen name="MessageAssignment" component={MessageAssignmentScreen} />
               <Stack.Screen name="Users" component={UsersScreen} />
+              <Stack.Screen name="ESP32Control" component={ESP32AdminControlScreen} />
+              <Stack.Screen name="ESP32Monitor" component={ESP32MonitorScreen} />
+              <Stack.Screen name="ESP32MonitorBridge" component={ESP32MonitorBridge} />
               <Stack.Screen name="Profile" component={ProfileScreen} />
               <Stack.Screen name="Settings" component={SettingsScreen} />
             </>
@@ -158,6 +170,11 @@ const AdaptiveAppNavigator = () => {
               <Stack.Screen name="ChildrenManagement" component={ChildrenManagementScreen} />
               <Stack.Screen name="MessageAssignment" component={MessageAssignmentScreen} />
               <Stack.Screen name="Users" component={UsersScreen} />
+              <Stack.Screen name="ESP32Control" component={ESP32AdminControlScreen} />
+              <Stack.Screen name="ESP32Monitor" component={ESP32MonitorScreen} />
+              <Stack.Screen name="ESP32MonitorBridge" component={ESP32MonitorBridge} />
+              <Stack.Screen name="AudioMessages" component={AudioMessagesScreen} />
+              <Stack.Screen name="ButtonMessages" component={ButtonMessagesScreen} />
             </>
           )}
         </>

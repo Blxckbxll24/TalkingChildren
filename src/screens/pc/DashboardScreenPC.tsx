@@ -42,9 +42,9 @@ const DashboardScreenPC = () => {
 
     // Datos simulados - aquí conectarías con la API real
     const getStatsData = (): StatCard[] => {
-        const userRole = user?.role_name || 'admin';
+        const userRole = user?.role_name || 'administrador';
         
-        if (userRole === 'admin') {
+        if (userRole === 'administrador') {
             return [
                 { id: '1', title: 'Total Usuarios', value: 156, icon: 'users', color: 'blue', change: '+12%', trend: 'up' },
                 { id: '2', title: 'Mensajes Activos', value: 2847, icon: 'messages', color: 'green', change: '+8%', trend: 'up' },
@@ -67,9 +67,9 @@ const DashboardScreenPC = () => {
     };
 
     const getRecentActivity = (): ActivityItem[] => {
-        const userRole = user?.role_name || 'admin';
+        const userRole = user?.role_name || 'administrador';
         
-        if (userRole === 'admin') {
+        if (userRole === 'administrador') {
             return [
                 { id: '1', type: 'user', title: 'Nuevo tutor registrado', description: 'María González se unió al sistema', time: '2h', user: 'María González' },
                 { id: '2', type: 'message', title: 'Mensaje popular', description: '"Hola mamá" usado 45 veces hoy', time: '3h' },
@@ -115,10 +115,10 @@ const DashboardScreenPC = () => {
     };
 
     const getUserTitle = (): string => {
-        const userRole = user?.role_name || 'admin';
+        const userRole = user?.role_name || 'administrador';
         const userName = user?.name || 'Usuario';
         
-        if (userRole === 'admin') return 'Panel de Administración';
+        if (userRole === 'administrador') return 'Panel de Administración';
         if (userRole === 'tutor') return `Panel de Tutor - ${userName}`;
         return `Dashboard`;
     };

@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, ActivityIndicator, ScrollView } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTheme } from '../context/ThemeContext';
 import BottomNavBar from '../components/Navbar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuthStore } from '../stores/authStore';
+import { useESP32WebSocketStore } from '../stores/esp32WebSocketStore';
+import { RootStackParamList } from '../navigation/AdaptiveAppNavigator';
+
+type DashboardNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 interface StatItem {
     id: string;
@@ -17,9 +23,15 @@ interface StatItem {
 
 const DashboardScreen = () => {
     const { theme } = useTheme();
+    const navigation = useNavigation<DashboardNavigationProp>();
     const isDark = theme === 'dark';
     const insets = useSafeAreaInsets();
     const { user } = useAuthStore();
+    const { status } = useESP32WebSocketStore();
+    
+    // Variables derivadas del store
+    const isConnected = status?.connected || false;
+    const esp32Status = status;
     
     const [loading, setLoading] = useState(true);
 
@@ -147,6 +159,53 @@ const DashboardScreen = () => {
                     scrollEnabled={false}
                     contentContainerStyle={{ marginBottom: 20 }}
                 />
+
+                {/* Botón Monitor ESP32 */}
+                <TouchableOpacity
+                    className={`rounded-2xl p-6 mb-6 shadow-lg ${isDark ? 'bg-blue-800' : 'bg-blue-600'}`}
+                    onPress={() => {
+                        console.log('🔍 Navegando directamente a ESP32MonitorBridge...');
+                        navigation.navigate('ESP32MonitorBridge');
+                    }}
+                    style={{
+                        shadowColor: '#000',
+                        shadowOffset: {
+                            width: 0,
+                            height: 4,
+                        },
+                        shadowOpacity: 0.3,
+                        shadowRadius: 6,
+                        elevation: 8,
+                    }}
+                >
+                    <View className="flex-row items-center justify-center">
+                        <View className="mr-4">
+                            <Text className="text-4xl">📟</Text>
+                        </View>
+                        <View className="flex-1">
+                            <Text className="text-white text-xl font-bold mb-1">
+                                Monitor ESP32
+                            </Text>
+                            <Text className="text-blue-100 text-sm mb-2">
+                                Ver eventos en tiempo real del dispositivo
+                            </Text>
+                            <View className="flex-row items-center">
+                                <View className={`w-3 h-3 rounded-full mr-2 ${status.connected ? 'bg-green-400' : 'bg-red-400'}`} />
+                                <Text className={`text-xs ${status.connected ? 'text-green-200' : 'text-red-200'}`}>
+                                    {status.connected ? 'ESP32 Conectado' : 'ESP32 Desconectado'}
+                                </Text>
+                                {status.battery !== undefined && (
+                                    <Text className="text-blue-200 text-xs ml-3">
+                                        🔋 {status.battery || 0}% | 📁 Cat. {status.category || 1}
+                                    </Text>
+                                )}
+                            </View>
+                        </View>
+                        <View className="ml-4">
+                            <Text className="text-white text-2xl">➤</Text>
+                        </View>
+                    </View>
+                </TouchableOpacity>
 
                 <View
                     className={`rounded-2xl p-6 shadow ${isDark ? 'bg-gray-800' : 'bg-gray-100'} mb-24`}

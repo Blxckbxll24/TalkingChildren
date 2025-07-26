@@ -153,7 +153,7 @@ const ProfileScreen = () => {
             </>
           )}
 
-          {user?.role_name === 'admin' && (
+          {user?.role_name === 'administrador' && (
             <>
               <Text className={`text-xl font-bold mt-8 mb-4 ${isDark ? 'text-white' : 'text-black'}`}>
                 Panel de Administración

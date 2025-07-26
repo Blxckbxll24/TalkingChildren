@@ -21,7 +21,7 @@ import { categoryService } from '../services/categoryService';
 import { Message, Category, CreateMessageDTO, UpdateMessageDTO } from '../types/api';
 import { useAudioPlayer, useAudioPlayerStatus, setAudioModeAsync } from 'expo-audio';
 import { authService } from '../services/authService';
-import { API_URL } from '@env';
+import { API_BASE_URL } from '../config/env';
 import { Plus } from 'lucide-react-native';
 
 const MessagesScreen = () => {
@@ -188,7 +188,7 @@ const MessagesScreen = () => {
         }
 
         // Usar la URL de la variable de entorno
-        const baseUrl = __DEV__ ? `http://${API_URL}` : 'https://tu-dominio-produccion.com';
+        const baseUrl = API_BASE_URL;
 
         // Usar la URL directa del audio con token en header
         const audioUrl = `${baseUrl}/api/messages/${message.id}/audio`;
@@ -320,7 +320,7 @@ const MessagesScreen = () => {
   );
 
   const canModifyMessage = (message: Message) => {
-    return user?.role_name === 'admin' || message.created_by === user?.id;
+    return user?.role_name?.toLowerCase() === 'administrador' || message.created_by === user?.id;
   };
 
   const renderMessageItem = ({ item }: { item: Message }) => (
@@ -380,7 +380,15 @@ const MessagesScreen = () => {
     </View>
   );
 
-  const canCreateMessages = user?.role_name === 'admin' || user?.role_name === 'tutor';
+  const canCreateMessages = user?.role_name?.toLowerCase() === 'administrador' || user?.role_name?.toLowerCase() === 'tutor' || user?.role_name?.toLowerCase() === 'niño';
+  
+  // Debug: Verificar datos del usuario
+  console.log('🔍 Debug MessagesScreen - Datos del usuario:', {
+    user: user,
+    role_name: user?.role_name,
+    role_name_lower: user?.role_name?.toLowerCase(),
+    canCreateMessages: canCreateMessages
+  });
 
   if (loading && !refreshing) {
     return (

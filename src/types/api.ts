@@ -65,13 +65,13 @@ export interface Category {
 
 export interface Message {
     id: number;
-    text: string;  // El backend usa 'text' no 'title' ni 'content'
-    audio_url?: string;  // El backend usa 'audio_url' no 'audio_path'
+    text: string;  // El backend usa 'text'
+    audio_url?: string;  // El backend usa 'audio_url'
     category_id: number;
-    category_name?: string;
+    category_name: string;  // Requerido para la funcionalidad
     created_by: number;
-    creator_name?: string;  // El backend devuelve 'creator_name' no 'created_by_name'
-    is_active?: boolean;
+    creator_name?: string;  // El backend devuelve 'creator_name'
+    is_active?: number | boolean;  // Backend devuelve 1/0, convertimos a boolean
     is_favorite?: boolean;
     created_at?: string;
     updated_at?: string;

@@ -36,6 +36,12 @@ const adminNavItems: NavItem[] = [
     roles: ['administrador'],
   },
   {
+    name: 'ESP32',
+    icon: <MaterialIcons name="memory" size={24} />,
+    to: 'ESP32Control',
+    roles: ['administrador'],
+  },
+  {
     name: 'Usuarios',
     icon: <MaterialIcons name="people" size={24} />,
     to: 'Users',
@@ -126,7 +132,7 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({ theme }) => {
 
       // Mapeo de pantallas por rol
       const screensByRole: Record<string, (keyof RootStackParamList)[]> = {
-        administrador: ['Dashboard', 'TTSDashboard', 'Messages', 'Users', 'Settings', 'Profile'],
+        administrador: ['Dashboard', 'TTSDashboard', 'Messages', 'ESP32Control', 'Users', 'Settings', 'Profile'],
         tutor: ['Dashboard', 'TTSDashboard', 'Messages', 'ChildrenManagement', 'Profile'],
         niño: ['Home', 'TTSDashboard', 'MyMessages', 'Profile'],
         guest: ['Home', 'Profile'],

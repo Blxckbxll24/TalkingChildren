@@ -31,7 +31,7 @@ const AdaptiveScreen: React.FC<AdaptiveScreenProps> = ({ screenType }) => {
             case 'dashboard':
                 if (isSmartwatch) {
                     return <SmartWatchHomeScreen />;
-                } else if (isDesktop && (user?.role_name === 'admin' || user?.role_name === 'tutor')) {
+                } else if (isDesktop && (user?.role_name === 'administrador' || user?.role_name === 'tutor')) {
                     return <DashboardScreenPC />;
                 }
                 return <DashboardScreen />;
@@ -39,7 +39,7 @@ const AdaptiveScreen: React.FC<AdaptiveScreenProps> = ({ screenType }) => {
             case 'home':
                 if (isSmartwatch) {
                     return <SmartWatchHomeScreen />;
-                } else if (isDesktop && (user?.role_name === 'admin' || user?.role_name === 'tutor')) {
+                } else if (isDesktop && (user?.role_name === 'administrador' || user?.role_name === 'tutor')) {
                     return <DashboardScreenPC />;
                 }
                 return <DashboardScreen />;

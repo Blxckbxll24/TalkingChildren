@@ -7,15 +7,9 @@ import { useAuthStore } from '../stores/authStore';
 import { 
   Sun, 
   Moon, 
-  Volume2, 
-  VolumeX, 
-  Bell, 
-  BellOff, 
   Shield, 
   User, 
-  Settings as SettingsIcon,
-  LogOut,
-  RefreshCw
+  LogOut
 } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -28,12 +22,6 @@ const SettingsScreen = () => {
   const { user, logout } = useAuthStore();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   
-  // Estados locales para configuraciones
-  const [soundEnabled, setSoundEnabled] = useState(true);
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [autoSpeakEnabled, setAutoSpeakEnabled] = useState(false);
-  const [vibrationEnabled, setVibrationEnabled] = useState(true);
-
   const SettingItem = ({ 
     icon, 
     title, 
@@ -111,23 +99,6 @@ const SettingsScreen = () => {
     );
   };
 
-  const handleClearCache = () => {
-    Alert.alert(
-      'Limpiar Caché',
-      'Esto eliminará los datos temporales de la aplicación. ¿Continuar?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Limpiar',
-          onPress: () => {
-            // Aquí implementarías la lógica para limpiar caché
-            Alert.alert('Éxito', 'Caché limpiado correctamente');
-          },
-        },
-      ]
-    );
-  };
-
   return (
     <View className={`flex-1 ${isDark ? 'bg-gray-900' : 'bg-white'}`} style={{ paddingTop: insets.top }}>
       <ScrollView className="flex-1 px-6 pt-6" showsVerticalScrollIndicator={false}>
@@ -152,38 +123,6 @@ const SettingsScreen = () => {
           onSwitchChange={toggleTheme}
         />
 
-        {/* Sección: Audio y Notificaciones */}
-        <Text className={`text-xl font-bold mb-4 mt-8 ${isDark ? 'text-white' : 'text-black'}`}>
-          Audio y Notificaciones
-        </Text>
-        
-        <SettingItem
-          icon={soundEnabled ? <Volume2 size={24} color="#3B82F6" /> : <VolumeX size={24} color="#6B7280" />}
-          title="Sonido de la aplicación"
-          subtitle="Activar sonidos del sistema"
-          showSwitch={true}
-          switchValue={soundEnabled}
-          onSwitchChange={setSoundEnabled}
-        />
-
-        <SettingItem
-          icon={notificationsEnabled ? <Bell size={24} color="#3B82F6" /> : <BellOff size={24} color="#6B7280" />}
-          title="Notificaciones"
-          subtitle="Recibir alertas importantes"
-          showSwitch={true}
-          switchValue={notificationsEnabled}
-          onSwitchChange={setNotificationsEnabled}
-        />
-
-        <SettingItem
-          icon={<RefreshCw size={24} color={autoSpeakEnabled ? "#3B82F6" : "#6B7280"} />}
-          title="Pronunciación automática"
-          subtitle="Hablar mensajes al seleccionarlos"
-          showSwitch={true}
-          switchValue={autoSpeakEnabled}
-          onSwitchChange={setAutoSpeakEnabled}
-        />
-
         {/* Sección: Cuenta */}
         <Text className={`text-xl font-bold mb-4 mt-8 ${isDark ? 'text-white' : 'text-black'}`}>
           Mi Cuenta
@@ -196,7 +135,7 @@ const SettingsScreen = () => {
           onPress={() => navigation.navigate('Profile')}
         />
 
-        {user?.role_name === 'admin' && (
+        {user?.role_name === 'administrador' && (
           <SettingItem
             icon={<Shield size={24} color="#DC2626" />}
             title="Panel de administración"
@@ -207,18 +146,6 @@ const SettingsScreen = () => {
             }}
           />
         )}
-
-        {/* Sección: Sistema */}
-        <Text className={`text-xl font-bold mb-4 mt-8 ${isDark ? 'text-white' : 'text-black'}`}>
-          Sistema
-        </Text>
-        
-        <SettingItem
-          icon={<SettingsIcon size={24} color="#6B7280" />}
-          title="Limpiar caché"
-          subtitle="Liberar espacio de almacenamiento"
-          onPress={handleClearCache}
-        />
 
         {/* Botón de cerrar sesión */}
         <TouchableOpacity
