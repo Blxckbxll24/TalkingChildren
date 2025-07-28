@@ -12,7 +12,7 @@ const getEnvVar = (key: string, defaultValue?: string): string => {
 };
 
 // Variables de red
-export const SERVER_IP = getEnvVar('SERVER_IP', '192.168.0.189');
+export const SERVER_IP = getEnvVar('SERVER_IP', '192.168.137.157');
 export const API_PORT = getEnvVar('API_PORT', '3000');
 export const WEBSOCKET_PORT = getEnvVar('WEBSOCKET_PORT', '8080');
 
