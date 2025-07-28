@@ -16,3 +16,5 @@ export const ESP32_FILE_MAPPING = {
     2: { category: 2, files: ['004.wav', '005.wav', '006.wav'] }, // Emociones
     3: { category: 3, files: ['007.wav', '008.wav', '009.wav'] }, // Necesidades
 };
+
+export { API_BASE_URL };

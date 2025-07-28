@@ -10,7 +10,7 @@ export class RoleService {
             const response = await apiClient.get<ApiResponse<Role[]>>('/roles');
             return response.data || [];
         } catch (error: any) {
-            console.error('Error obteniendo roles:', error);
+            
             throw this.handleError(error);
         }
     }
@@ -26,7 +26,7 @@ export class RoleService {
             }
             throw new Error(response.message || 'Error creando rol');
         } catch (error: any) {
-            console.error('Error creando rol:', error);
+            
             throw this.handleError(error);
         }
     }
@@ -42,7 +42,7 @@ export class RoleService {
             }
             throw new Error(response.message || 'Error actualizando rol');
         } catch (error: any) {
-            console.error('Error actualizando rol:', error);
+            
             throw this.handleError(error);
         }
     }
@@ -57,7 +57,7 @@ export class RoleService {
                 throw new Error(response.message || 'Error eliminando rol');
             }
         } catch (error: any) {
-            console.error('Error eliminando rol:', error);
+            
             throw this.handleError(error);
         }
     }

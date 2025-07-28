@@ -51,7 +51,7 @@ const ProfileScreen = () => {
                 routes: [{ name: 'Login' }],
               });
             } catch (error) {
-              console.error('Error during logout:', error);
+              
               Alert.alert('Error', 'No se pudo cerrar sesión. Inténtalo de nuevo.');
             } finally {
               setLoading(false);
@@ -146,8 +146,6 @@ const ProfileScreen = () => {
                 Panel de Tutor
               </Text>
               <View>
-                <LabelValue label="Niños Asignados" value="3" />
-                <LabelValue label="Mensajes Configurados" value="15" />
                 <LabelValue label="Estado" value="Activo" />
               </View>
             </>

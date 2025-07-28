@@ -53,7 +53,7 @@ export default function ButtonMessagesScreen() {
       initializeButtonConfigs();
       
     } catch (err: any) {
-      console.error('❌ Error loading messages:', err);
+      
       const errorMessage = err.message || 'Error al cargar mensajes del servidor';
       setError(errorMessage);
       
@@ -119,7 +119,7 @@ export default function ButtonMessagesScreen() {
         );
       }
     } catch (error: any) {
-      console.error('❌ Connectivity test failed:', error);
+      
       
       let diagnosticMessage = 'No se puede acceder al servidor:\n\n';
       
@@ -212,7 +212,7 @@ export default function ButtonMessagesScreen() {
         );
         
       } catch (error: any) {
-        console.error('❌ Error configuring button with audio:', error);
+        
         setError(`Error al configurar botón: ${error.message}`);
         
         Alert.alert(

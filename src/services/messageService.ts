@@ -8,22 +8,51 @@ export class MessageService {
     async getAllMessages(): Promise<Message[]> {
         try {
             const response = await apiClient.get<ApiResponse<Message[]>>('/messages');
-            return response.data || [];
+            console.log('📥 Messages response:', response);
+
+            if (response.success && response.data) {
+                // Procesar los mensajes para formatear la información de asignación
+                const processedMessages = response.data.map(message => {
+                    if (message.assigned_children) {
+                        // Convertir la cadena concatenada en un array de objetos
+                        message.assigned_children_list = message.assigned_children
+                            .split('|')
+                            .filter(child => child && child.includes(':'))
+                            .map((child: string) => {
+                                const [name, id] = child.split(':');
+                                return { name, id: parseInt(id) };
+                            });
+                    } else {
+                        message.assigned_children_list = [];
+                    }
+                    return message;
+                });
+
+                return processedMessages;
+            }
+
+            console.warn('⚠️ Messages response structure unexpected:', response);
+            return [];
         } catch (error: any) {
-            console.error('Error obteniendo mensajes:', error);
+            console.error('❌ Error getting messages:', error);
             throw this.handleError(error);
         }
-    }
-
-    /**
+    }    /**
      * Obtener mensajes propios del usuario
      */
     async getMyMessages(): Promise<Message[]> {
         try {
             const response = await apiClient.get<ApiResponse<Message[]>>('/messages/my-messages');
-            return response.data || [];
+            console.log('📥 My messages response:', response);
+
+            if (response.success && response.data) {
+                return response.data;
+            }
+
+            console.warn('⚠️ My messages response structure unexpected:', response);
+            return [];
         } catch (error: any) {
-            console.error('Error obteniendo mis mensajes:', error);
+            console.error('❌ Error getting my messages:', error);
             throw this.handleError(error);
         }
     }
@@ -39,7 +68,7 @@ export class MessageService {
             }
             throw new Error(response.message || 'Mensaje no encontrado');
         } catch (error: any) {
-            console.error('Error obteniendo mensaje:', error);
+
             throw this.handleError(error);
         }
     }
@@ -55,7 +84,7 @@ export class MessageService {
             }
             throw new Error(response.message || 'Error creando mensaje');
         } catch (error: any) {
-            console.error('Error creando mensaje:', error);
+
             throw this.handleError(error);
         }
     }
@@ -71,7 +100,7 @@ export class MessageService {
             }
             throw new Error(response.message || 'Error actualizando mensaje');
         } catch (error: any) {
-            console.error('Error actualizando mensaje:', error);
+
             throw this.handleError(error);
         }
     }
@@ -84,7 +113,7 @@ export class MessageService {
             const response = await apiClient.delete<ApiResponse>(`/messages/${id}`);
             return response.success;
         } catch (error: any) {
-            console.error('Error eliminando mensaje:', error);
+
             throw this.handleError(error);
         }
     }
@@ -97,7 +126,7 @@ export class MessageService {
             const response = await apiClient.get<ApiResponse<Message[]>>(`/messages/category/${categoryId}`);
             return response.data || [];
         } catch (error: any) {
-            console.error('Error obteniendo mensajes por categoría:', error);
+
             throw this.handleError(error);
         }
     }
@@ -113,7 +142,7 @@ export class MessageService {
             }
             throw new Error(response.message || 'Error regenerando audio');
         } catch (error: any) {
-            console.error('Error regenerando audio:', error);
+
             throw this.handleError(error);
         }
     }
@@ -130,7 +159,7 @@ export class MessageService {
             }
             throw new Error('Audio no disponible para este mensaje');
         } catch (error: any) {
-            console.error('Error obteniendo URL de audio:', error);
+
             throw this.handleError(error);
         }
     }
@@ -163,7 +192,7 @@ export class MessageService {
                 recent
             };
         } catch (error: any) {
-            console.error('Error obteniendo estadísticas:', error);
+
             throw this.handleError(error);
         }
     }

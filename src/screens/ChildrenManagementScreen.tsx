@@ -17,6 +17,8 @@ import { useAuthStore } from '../stores/authStore';
 import { relationService } from '../services/relationService';
 import { RelationResponse, User } from '../types/api';
 import { UserPlus, Users, Calendar, Mail, Phone, X, Search, Plus } from 'lucide-react-native';
+import { API_BASE_URL } from '../config/env';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ChildrenManagementScreen = () => {
   const { theme } = useTheme();
@@ -40,7 +42,7 @@ const ChildrenManagementScreen = () => {
       const childrenData = await relationService.getMyChildren();
       setChildren(childrenData);
     } catch (error) {
-      console.error('Error loading children:', error);
+      
       Alert.alert('Error', 'No se pudieron cargar los niños');
     } finally {
       setLoading(false);
@@ -54,9 +56,36 @@ const ChildrenManagementScreen = () => {
     }
 
     try {
+      // Obtener el token de autenticación
+      const token = await AsyncStorage.getItem('token');
+      if (!token) {
+        Alert.alert('Error', 'No se encontró token de autenticación');
+        return;
+      }
+
+      // Buscar el usuario por email
+      const response = await fetch(`${API_BASE_URL}/api/users/search?email=${encodeURIComponent(childEmail.trim())}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('No se encontró un usuario con ese email');
+      }
+
+      const userData = await response.json();
+      
+      if (userData.role_name !== 'niño') {
+        throw new Error('El usuario debe tener rol de niño');
+      }
+
+      // Crear la relación
       await relationService.createRelation({
         tutor_id: user?.id || 0,
-        child_id: 0, // Esto se debe cambiar por la búsqueda del niño por email
+        child_id: userData.id,
       });
 
       Alert.alert('Éxito', 'Niño agregado exitosamente');
@@ -84,7 +113,7 @@ const ChildrenManagementScreen = () => {
               Alert.alert('Éxito', 'Relación eliminada exitosamente');
               loadChildren();
             } catch (error) {
-              console.error('Error removing child:', error);
+              
               Alert.alert('Error', 'No se pudo eliminar la relación');
             }
           },

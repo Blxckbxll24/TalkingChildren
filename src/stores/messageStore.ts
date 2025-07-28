@@ -21,7 +21,7 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
             set({ loading: true, error: null });
 
             // Get auth token
-            const token = await AsyncStorage.getItem('authToken');
+            const token = await AsyncStorage.getItem('auth_token');
             if (!token) {
                 throw new Error('Token de autenticación no encontrado');
             }
@@ -54,7 +54,7 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
             console.log(`✅ Mensajes cargados: ${messages.length} mensajes`);
             set({ messages, loading: false });
         } catch (error) {
-            console.error('❌ Error fetching messages:', error);
+
             set({
                 error: error instanceof Error ? error.message : 'Error desconocido',
                 loading: false
@@ -74,7 +74,7 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
             }
 
             // Get auth token
-            const token = await AsyncStorage.getItem('authToken');
+            const token = await AsyncStorage.getItem('auth_token');
             if (!token) {
                 throw new Error('Token de autenticación no encontrado');
             }
@@ -110,7 +110,7 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
             console.log(`✅ Audio descargado: ${base64Audio.length} caracteres base64`);
             return base64Audio;
         } catch (error) {
-            console.error('❌ Error downloading audio:', error);
+
             return null;
         }
     },

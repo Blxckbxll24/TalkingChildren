@@ -53,6 +53,7 @@ export default function ESP32MonitorScreen() {
     connecting,
     connect, 
     disconnect,
+    sendCommand,
     addEventListener 
   } = useESP32WebSocketStore();
   
@@ -67,11 +68,9 @@ export default function ESP32MonitorScreen() {
   const esp32Status = status;
 
   useEffect(() => {
-    // Auto-conectar al WebSocket si no está conectado
-    if (!isConnected && !isConnecting) {
-      handleConnect();
-    }
-  }, [isConnected, isConnecting]);
+    // NO auto-conectar automáticamente
+    // El usuario debe presionar el botón "Conectar" manualmente
+  }, []);
 
   // Agregar listener para eventos ESP32
   useEffect(() => {
@@ -143,22 +142,15 @@ export default function ESP32MonitorScreen() {
   const handleConnect = async () => {
     try {
       connect(ESP32_WEBSOCKET_URL);
-      // Dar tiempo para la conexión
-      setTimeout(() => {
-        if (isConnected) {
-          Alert.alert('✅ Conectado', 'Monitor ESP32 conectado exitosamente');
-        } else {
-          Alert.alert('❌ Error', 'No se pudo conectar al ESP32');
-        }
-      }, 2000);
+      // Request initial status after connection attempt
+      setTimeout(() => sendCommand({ type: 'get_status' }), 1000);
     } catch (error) {
-      Alert.alert('❌ Error', `Error de conexión: ${error}`);
+      
     }
   };
 
   const handleDisconnect = () => {
     disconnect();
-    Alert.alert('🔌 Desconectado', 'Desconectado del monitor ESP32');
   };
 
   const clearEvents = () => {

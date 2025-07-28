@@ -9,18 +9,19 @@ import {
   Moon, 
   Shield, 
   User, 
-  LogOut
+  LogOut,
+  MessageCircle,
+  Settings
 } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { RootStackParamList } from '../navigation/AppNavigator';
 
 const SettingsScreen = () => {
   const { theme, toggleTheme } = useTheme();
   const isDark = theme === 'dark';
   const insets = useSafeAreaInsets();
   const { user, logout } = useAuthStore();
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
   
   const SettingItem = ({ 
     icon, 
@@ -135,16 +136,27 @@ const SettingsScreen = () => {
           onPress={() => navigation.navigate('Profile')}
         />
 
+        <SettingItem
+          icon={<MessageCircle size={24} color="#25D366" />}
+          title="Configuración WhatsApp"
+          subtitle="Configurar notificaciones de WhatsApp"
+          onPress={() => navigation.navigate('WhatsAppConfig')}
+        />
+
+        {/* Configuraciones adicionales para admin */}
         {user?.role_name === 'administrador' && (
-          <SettingItem
-            icon={<Shield size={24} color="#DC2626" />}
-            title="Panel de administración"
-            subtitle="Gestionar usuarios y sistema"
-            onPress={() => {
-              // Navegar a panel admin
-              Alert.alert('Info', 'Panel de administración próximamente');
-            }}
-          />
+          <>
+            <Text className={`text-xl font-bold mb-4 mt-8 ${isDark ? 'text-white' : 'text-black'}`}>
+              Configuración Avanzada
+            </Text>
+            
+            <SettingItem
+              icon={<Settings size={24} color="#8B5CF6" />}
+              title="Configuración de Botones"
+              subtitle="Personalizar botones del dispositivo"
+              onPress={() => navigation.navigate('Button')}
+            />
+          </>
         )}
 
         {/* Botón de cerrar sesión */}

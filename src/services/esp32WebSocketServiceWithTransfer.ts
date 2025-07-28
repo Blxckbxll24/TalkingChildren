@@ -17,6 +17,7 @@ export interface ESP32Status {
     uptime?: number;
     wifi_rssi?: number;
     free_heap?: number;
+    system_on?: boolean;
     buttons?: Array<{
         number: number;
         configured: boolean;
@@ -114,7 +115,7 @@ class ESP32WebSocketService {
                         console.log('📨 ESP32WebSocketService: Received:', message.type);
                         this.handleMessage(message);
                     } catch (error) {
-                        console.error('❌ ESP32WebSocketService: Parse error:', error);
+                        
                     }
                 };
 
@@ -127,8 +128,8 @@ class ESP32WebSocketService {
                     console.log(`🔌 ESP32WebSocketService: Disconnected (${event.code}: ${event.reason})`);
                     this.notifyListeners('onConnectionStateChange', false);
 
-                    // Auto-reconnect
-                    this.scheduleReconnect(url);
+                    // NO hacer auto-reconexión automática
+                    // Solo conectar cuando el usuario lo solicite explícitamente
 
                     if (this.reconnectAttempts === 0) {
                         resolve(false);
@@ -139,8 +140,8 @@ class ESP32WebSocketService {
                     clearTimeout(timeout);
                     this.isConnecting = false;
 
-                    console.error('❌ ESP32WebSocketService: Connection error:', error);
-                    this.notifyListeners('onError', 'Connection failed');
+                    
+                    // NO notificar errores a la UI, solo loggear para debugging
 
                     if (this.reconnectAttempts === 0) {
                         reject(error);
@@ -149,7 +150,7 @@ class ESP32WebSocketService {
 
             } catch (error) {
                 this.isConnecting = false;
-                console.error('❌ ESP32WebSocketService: Setup error:', error);
+                
                 reject(error);
             }
         });
@@ -221,6 +222,17 @@ class ESP32WebSocketService {
             case 'category_changed':
                 console.log(`📁 Category changed to ${message.category}: ${message.categoryName}`);
                 break;
+
+            case 'system_state_changed':
+                console.log(`🔋 System state changed: ${message.system_on ? 'ON' : 'OFF'}`);
+                // Notificar a los listeners sobre el cambio de estado
+                this.notifyListeners('onStatusUpdate', {
+                    connected: true,
+                    system_on: message.system_on,
+                    battery: message.battery,
+                    category: message.category
+                });
+                break;
         }
     }
 
@@ -242,7 +254,7 @@ class ESP32WebSocketService {
 
         this.reconnectTimer = setTimeout(() => {
             this.connect(url).catch(error => {
-                console.error('❌ ESP32WebSocketService: Reconnection failed:', error);
+                
             });
         }, delay);
     }
@@ -278,7 +290,7 @@ class ESP32WebSocketService {
             console.log(`📤 ESP32WebSocketService: Sent ${message.type}`);
             return true;
         } catch (error) {
-            console.error('❌ ESP32WebSocketService: Send error:', error);
+            
             return false;
         }
     }
@@ -327,6 +339,27 @@ class ESP32WebSocketService {
         });
     }
 
+    shutdownESP32(): boolean {
+        console.log('🔌 ESP32WebSocketService: Sending shutdown command');
+        return this.sendMessage({
+            type: 'shutdown'
+        });
+    }
+
+    wakeupESP32(): boolean {
+        console.log('⚡ ESP32WebSocketService: Sending wakeup command');
+        return this.sendMessage({
+            type: 'wakeup'
+        });
+    }
+
+    powerOnESP32(): boolean {
+        console.log('⚡ ESP32WebSocketService: Sending power_on command');
+        return this.sendMessage({
+            type: 'power_on'
+        });
+    }
+
     ping(): boolean {
         return this.sendMessage({
             type: 'ping',
@@ -355,7 +388,7 @@ class ESP32WebSocketService {
                     fn.apply(listener, args);
                 }
             } catch (error) {
-                console.error(`❌ ESP32WebSocketService: Listener error (${method}):`, error);
+                
             }
         });
     }

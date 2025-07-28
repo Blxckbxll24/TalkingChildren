@@ -10,7 +10,7 @@ export class CategoryService {
             const response = await apiClient.get<ApiResponse<Category[]>>('/categories');
             return response.data || [];
         } catch (error: any) {
-            console.error('Error obteniendo categorías:', error);
+            
             throw this.handleError(error);
         }
     }
@@ -23,7 +23,7 @@ export class CategoryService {
             const response = await apiClient.get<ApiResponse<Category[]>>('/categories/basic');
             return response.data || [];
         } catch (error: any) {
-            console.error('Error obteniendo categorías básicas:', error);
+            
             throw this.handleError(error);
         }
     }
@@ -39,7 +39,7 @@ export class CategoryService {
             }
             throw new Error(response.message || 'Categoría no encontrada');
         } catch (error: any) {
-            console.error('Error obteniendo categoría:', error);
+            
             throw this.handleError(error);
         }
     }
@@ -55,7 +55,7 @@ export class CategoryService {
             }
             throw new Error(response.message || 'Error creando categoría');
         } catch (error: any) {
-            console.error('Error creando categoría:', error);
+            
             throw this.handleError(error);
         }
     }
@@ -71,7 +71,7 @@ export class CategoryService {
             }
             throw new Error(response.message || 'Error actualizando categoría');
         } catch (error: any) {
-            console.error('Error actualizando categoría:', error);
+            
             throw this.handleError(error);
         }
     }
@@ -86,7 +86,7 @@ export class CategoryService {
                 throw new Error(response.message || 'Error eliminando categoría');
             }
         } catch (error: any) {
-            console.error('Error eliminando categoría:', error);
+            
             throw this.handleError(error);
         }
     }

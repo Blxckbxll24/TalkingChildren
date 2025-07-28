@@ -51,7 +51,7 @@ const TTSDashboardScreen = () => {
 
         loadData();
       } catch (error) {
-        console.error('Error initializing audio:', error);
+        // Error silenciado para el usuario
         loadData(); // Continuar aunque falle la configuración de audio
       }
     };
@@ -72,7 +72,7 @@ const TTSDashboardScreen = () => {
       // Cargar favoritos del usuario (simulado)
       setFavoriteMessages([1, 3, 5]); // IDs de mensajes favoritos
     } catch (error) {
-      console.error('Error loading data:', error);
+      // Error silenciado para el usuario
       Alert.alert('Error', 'No se pudieron cargar los datos');
     } finally {
       setLoading(false);
@@ -166,16 +166,16 @@ const TTSDashboardScreen = () => {
           console.log(`🎵 Audio cargado, iniciando reproducción...`);
           await audioPlayer.play();
         } catch (audioError) {
-          console.error('Error loading audio:', audioError);
+          // Error silenciado para el usuario
           throw audioError; // Re-throw para que se capture en el catch principal
         }
       } catch (audioError) {
-        console.error('Error loading audio:', audioError);
+        // Error silenciado para el usuario
         // Fallback
         playFallbackTTS(message);
       }
     } catch (error) {
-      console.error('Error playing TTS:', error);
+      // Error silenciado para el usuario
       Alert.alert('Error', 'No se pudo reproducir el mensaje');
       setPlayingMessage(null);
     }
@@ -220,7 +220,7 @@ const TTSDashboardScreen = () => {
           audioPlayer.play();
           console.log(`✅ Reproducción iniciada después de retry`);
         } catch (error) {
-          console.error(`❌ Error en retry de reproducción:`, error);
+          // Error silenciado para el usuario
         }
       }, 200);
     }

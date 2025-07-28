@@ -59,7 +59,7 @@ const MessagesScreen = () => {
       setMessages(messagesData);
       setCategories(categoriesData);
     } catch (error) {
-      console.error('Error loading data:', error);
+      
       Alert.alert('Error', 'No se pudieron cargar los datos');
     } finally {
       setLoading(false);
@@ -125,7 +125,7 @@ const MessagesScreen = () => {
       closeModal();
       await loadData();
     } catch (error: any) {
-      console.error('Error saving message:', error);
+      
       Alert.alert('Error', error.message || 'Error al guardar el mensaje');
     } finally {
       setLoading(false);
@@ -148,7 +148,7 @@ const MessagesScreen = () => {
               Alert.alert('Éxito', 'Mensaje eliminado correctamente');
               await loadData();
             } catch (error: any) {
-              console.error('Error deleting message:', error);
+              
               Alert.alert('Error', error.message || 'Error al eliminar el mensaje');
             } finally {
               setLoading(false);
@@ -242,16 +242,16 @@ const MessagesScreen = () => {
           console.log(`🎵 Audio cargado, iniciando reproducción...`);
           await audioPlayer.play();
         } catch (audioError) {
-          console.error('Error loading audio:', audioError);
+          
           throw audioError; // Re-throw para que se capture en el catch principal
         }
       } catch (audioError) {
-        console.error('Error loading audio:', audioError);
+        
         // Fallback
         playFallbackTTS(message);
       }
     } catch (error) {
-      console.error('Error playing TTS:', error);
+      
       Alert.alert('Error', 'No se pudo reproducir el mensaje');
       setPlayingMessage(null);
     }
@@ -301,7 +301,7 @@ const MessagesScreen = () => {
           audioPlayer.play();
           console.log(`✅ Reproducción iniciada después de retry`);
         } catch (error) {
-          console.error(`❌ Error en retry de reproducción:`, error);
+          
         }
       }, 200);
     }
@@ -323,62 +323,95 @@ const MessagesScreen = () => {
     return user?.role_name?.toLowerCase() === 'administrador' || message.created_by === user?.id;
   };
 
-  const renderMessageItem = ({ item }: { item: Message }) => (
-    <View className={`mb-3 rounded-xl p-4 shadow ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
-      <View className="mb-2 flex-row items-start justify-between">
-        <View className="mr-3 flex-1">
-          <Text className={`mb-2 text-lg font-bold ${isDark ? 'text-white' : 'text-black'}`}>
-            {item.text}
-          </Text>
+  const renderMessageItem = ({ item }: { item: Message }) => {
+    // Mostrar información de asignación
+    const assignedChildren = (item as any).assigned_children_list || [];
+    const hasAssignments = assignedChildren.length > 0;
 
-          <View className="mb-2 flex-row items-center">
-            <View className="mr-2 rounded-full bg-blue-500 px-2 py-1">
-              <Text className="text-xs font-semibold text-white">
-                {item.category_name || 'Sin categoría'}
-              </Text>
+    return (
+      <View className={`mb-3 rounded-xl p-4 shadow ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
+        <View className="mb-2 flex-row items-start justify-between">
+          <View className="mr-3 flex-1">
+            <Text className={`mb-2 text-lg font-bold ${isDark ? 'text-white' : 'text-black'}`}>
+              {item.text}
+            </Text>
+
+            <View className="mb-2 flex-row items-center">
+              <View className="mr-2 rounded-full bg-blue-500 px-2 py-1">
+                <Text className="text-xs font-semibold text-white">
+                  {item.category_name || 'Sin categoría'}
+                </Text>
+              </View>
+            </View>
+
+            <Text className={`text-xs mb-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+              Por: {item.creator_name || 'Sistema'} |{' '}
+              {item.created_at && (
+                <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                  Creado: {new Date(item.created_at).toLocaleDateString()}
+                </Text>
+              )}
+            </Text>
+
+            {/* Mostrar niños asignados */}
+            <View className="mt-1">
+              {hasAssignments ? (
+                <View>
+                  <Text className={`text-xs font-semibold mb-1 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                    Asignado a ({assignedChildren.length}):
+                  </Text>
+                  <View className="flex-row flex-wrap">
+                    {assignedChildren.map((child: any, index: number) => (
+                      <View
+                        key={`${child.id}-${index}`}
+                        className={`bg-green-100 rounded-full px-2 py-1 mr-1 mb-1 ${isDark ? 'bg-green-800' : 'bg-green-100'}`}
+                      >
+                        <Text className={`text-xs ${isDark ? 'text-green-300' : 'text-green-800'}`}>
+                          {child.name}
+                        </Text>
+                      </View>
+                    ))}
+                  </View>
+                </View>
+              ) : (
+                <Text className={`text-xs italic ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
+                  No asignado a ningún niño
+                </Text>
+              )}
             </View>
           </View>
 
-          <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-            Por: {item.creator_name || 'Sistema'} |{' '}
-            {item.created_at && (
-              <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                Creado: {new Date(item.created_at).toLocaleDateString()}
+          <View className="flex-row items-center">
+            {/* Botón de reproducir TTS */}
+            <TouchableOpacity
+              onPress={() => playTTS(item)}
+              className="mr-2 rounded-lg bg-green-500 p-2">
+              <Text style={{ fontSize: 16, color: '#fff' }}>
+                {playingMessage === item.id ? '🔊' : '▶️'}
               </Text>
+            </TouchableOpacity>
+
+            {/* Botones de edición solo para usuarios con permisos */}
+            {canModifyMessage(item) && (
+              <>
+                <TouchableOpacity
+                  onPress={() => openEditModal(item)}
+                  className="mr-2 rounded-lg bg-blue-500 p-2">
+                  <Text style={{ fontSize: 16, color: '#fff' }}>✏️</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => handleDelete(item)}
+                  className="rounded-lg bg-red-500 p-2">
+                  <Text style={{ fontSize: 16, color: '#fff' }}>🗑️</Text>
+                </TouchableOpacity>
+              </>
             )}
-          </Text>
-        </View>
-
-        <View className="flex-row items-center">
-          {/* Botón de reproducir TTS */}
-          <TouchableOpacity
-            onPress={() => playTTS(item)}
-            className="mr-2 rounded-lg bg-green-500 p-2">
-            <Text style={{ fontSize: 16, color: '#fff' }}>
-              {playingMessage === item.id ? '🔊' : '▶️'}
-            </Text>
-          </TouchableOpacity>
-
-          {/* Botones de edición solo para usuarios con permisos */}
-          {canModifyMessage(item) && (
-            <>
-              <TouchableOpacity
-                onPress={() => openEditModal(item)}
-                className="mr-2 rounded-lg bg-blue-500 p-2">
-                <Text style={{ fontSize: 16, color: '#fff' }}>✏️</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() => handleDelete(item)}
-                className="rounded-lg bg-red-500 p-2">
-                <Text style={{ fontSize: 16, color: '#fff' }}>🗑️</Text>
-              </TouchableOpacity>
-            </>
-          )}
+          </View>
         </View>
       </View>
-    </View>
-  );
+    );
+  };
 
   const canCreateMessages = user?.role_name?.toLowerCase() === 'administrador' || user?.role_name?.toLowerCase() === 'tutor' || user?.role_name?.toLowerCase() === 'niño';
   

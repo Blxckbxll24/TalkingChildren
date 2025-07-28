@@ -47,24 +47,19 @@ export default function ButtonConfigWithTransferScreen() {
   }, []);
 
   useEffect(() => {
-    // Auto-connect when component mounts
-    if (!isConnected && !isConnecting) {
-      handleConnect();
-    }
+    // NO auto-conectar automáticamente
+    // El usuario debe presionar el botón "Conectar" manualmente
   }, []);
 
   const handleConnect = async () => {
     try {
       const success = await connect(ESP32_WEBSOCKET_URL);
       if (success) {
-        Alert.alert('✅ Conectado', 'ESP32 conectado exitosamente');
         // Request initial status
         setTimeout(() => requestStatus(), 1000);
-      } else {
-        Alert.alert('❌ Error', 'No se pudo conectar al ESP32');
       }
     } catch (error) {
-      Alert.alert('❌ Error', `Error de conexión: ${error}`);
+      
     }
   };
 
@@ -98,7 +93,7 @@ export default function ButtonConfigWithTransferScreen() {
 
   const selectMessageForButton = (button: number) => {
     if (messages.length === 0) {
-      Alert.alert('❌ Error', 'No hay mensajes disponibles. Asegúrate de estar conectado al backend.');
+      console.log('No hay mensajes disponibles');
       return;
     }
 
@@ -119,12 +114,12 @@ export default function ButtonConfigWithTransferScreen() {
 
   const downloadAndTransferAudio = async (button: number, message: Message) => {
     if (!isConnected) {
-      Alert.alert('❌ Error', 'ESP32 no está conectado');
+      console.log('ESP32 no está conectado');
       return;
     }
 
     if (audioTransfer.inProgress) {
-      Alert.alert('⚠️ Transferencia en progreso', 'Espera a que termine la transferencia actual');
+      console.log('Transferencia en progreso, esperando...');
       return;
     }
 
@@ -180,8 +175,7 @@ export default function ButtonConfigWithTransferScreen() {
       }
 
     } catch (error) {
-      console.error('❌ Error en transferencia:', error);
-      Alert.alert('❌ Error', `Error en transferencia: ${error instanceof Error ? error.message : 'Error desconocido'}`);
+      
     } finally {
       setTransferringButton(null);
     }
@@ -206,21 +200,19 @@ export default function ButtonConfigWithTransferScreen() {
 
   const handlePlayButton = (button: number) => {
     if (!isConnected) {
-      Alert.alert('❌ Error', 'ESP32 no está conectado');
+      console.log('ESP32 no está conectado');
       return;
     }
 
     const success = playButton(button);
-    if (success) {
-      Alert.alert('🔊 Reproduciendo', `Reproduciendo audio del botón ${button}`);
-    } else {
-      Alert.alert('❌ Error', 'No se pudo reproducir el audio');
+    if (!success) {
+      console.log('No se pudo reproducir el audio');
     }
   };
 
   const handleChangeCategory = () => {
     if (!isConnected) {
-      Alert.alert('❌ Error', 'ESP32 no está conectado');
+      console.log('ESP32 no está conectado');
       return;
     }
 

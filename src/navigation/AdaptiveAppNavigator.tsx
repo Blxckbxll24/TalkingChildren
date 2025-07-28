@@ -20,12 +20,14 @@ import MessagesScreen from '../screens/MessagesScreen';
 import TTSDashboardScreen from '../screens/TTSDashboardScreen';
 import ChildrenManagementScreen from '../screens/ChildrenManagementScreen';
 import MessageAssignmentScreen from '../screens/MessageAssignmentScreen';
+import TutorMessageManagementScreen from '../screens/TutorMessageManagementScreen';
 import UsersScreen from '../screens/UsersScreen';
 import AudioMessagesScreen from '../screens/AudioMessagesScreen';
 import ButtonMessagesScreen from '../screens/ButtonMessagesScreen';
 import ESP32AdminControlScreen from '../screens/ESP32AdminControlScreen';
 import ESP32MonitorScreen from '../screens/ESP32MonitorScreen';
 import ESP32MonitorBridge from '../screens/ESP32MonitorBridge';
+import WhatsAppConfigScreen from '../screens/WhatsAppConfigScreen';
 
 // Pantallas PC (admin/tutor)
 import LoginScreenPC from '../screens/pc/LoginScreenPC';
@@ -42,6 +44,7 @@ export type RootStackParamList = {
   Home: undefined;
   Profile: undefined;
   Settings: undefined;
+  WhatsAppConfig: undefined;
   Dashboard: undefined;
   ConfigDetail: { id: number };
   Button: undefined;
@@ -72,6 +75,7 @@ export type RootStackParamList = {
   TTSDashboard: undefined;
   ChildrenManagement: undefined;
   MessageAssignment: undefined;
+  TutorMessageManagement: undefined;
   MessageManagement: undefined;
   SmartWatchHome: undefined;
 };
@@ -145,12 +149,14 @@ const AdaptiveAppNavigator = () => {
               <Stack.Screen name="MessageManagement" component={MessageManagementPC} />
               <Stack.Screen name="ChildrenManagement" component={ChildrenManagementScreen} />
               <Stack.Screen name="MessageAssignment" component={MessageAssignmentScreen} />
+              <Stack.Screen name="TutorMessageManagement" component={TutorMessageManagementScreen} />
               <Stack.Screen name="Users" component={UsersScreen} />
               <Stack.Screen name="ESP32Control" component={ESP32AdminControlScreen} />
               <Stack.Screen name="ESP32Monitor" component={ESP32MonitorScreen} />
               <Stack.Screen name="ESP32MonitorBridge" component={ESP32MonitorBridge} />
               <Stack.Screen name="Profile" component={ProfileScreen} />
               <Stack.Screen name="Settings" component={SettingsScreen} />
+              <Stack.Screen name="WhatsAppConfig" component={WhatsAppConfigScreen} />
             </>
           ) : (
             // Navegación móvil estándar
@@ -169,12 +175,14 @@ const AdaptiveAppNavigator = () => {
               <Stack.Screen name="TTSDashboard" component={TTSDashboardScreen} />
               <Stack.Screen name="ChildrenManagement" component={ChildrenManagementScreen} />
               <Stack.Screen name="MessageAssignment" component={MessageAssignmentScreen} />
+              <Stack.Screen name="TutorMessageManagement" component={TutorMessageManagementScreen} />
               <Stack.Screen name="Users" component={UsersScreen} />
               <Stack.Screen name="ESP32Control" component={ESP32AdminControlScreen} />
               <Stack.Screen name="ESP32Monitor" component={ESP32MonitorScreen} />
               <Stack.Screen name="ESP32MonitorBridge" component={ESP32MonitorBridge} />
               <Stack.Screen name="AudioMessages" component={AudioMessagesScreen} />
               <Stack.Screen name="ButtonMessages" component={ButtonMessagesScreen} />
+              <Stack.Screen name="WhatsAppConfig" component={WhatsAppConfigScreen} />
             </>
           )}
         </>

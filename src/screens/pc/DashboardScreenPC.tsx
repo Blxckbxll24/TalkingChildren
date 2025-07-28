@@ -8,6 +8,9 @@ import {
     FlatList,
     Dimensions,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../../navigation/AdaptiveAppNavigator';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuthStore } from '../../stores/authStore';
 import { useDeviceType } from '../../hooks/useDeviceType';
@@ -38,6 +41,7 @@ const DashboardScreenPC = () => {
     const { user } = useAuthStore();
     const { screenWidth } = useDeviceType();
     const insets = useSafeAreaInsets();
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const [loading, setLoading] = useState(false);
 
     // Datos simulados - aquí conectarías con la API real
@@ -211,11 +215,19 @@ const DashboardScreenPC = () => {
                     <View className="flex-row space-x-4">
                         <TouchableOpacity 
                             className={`p-3 rounded-xl ${isDark ? 'bg-gray-800' : 'bg-white'} shadow`}
+                            onPress={() => {
+                                // Navigate to notifications - implementar más tarde
+                                console.log('Notificaciones clicked');
+                            }}
                         >
                             <Text style={{ fontSize: 24, color: isDark ? '#fff' : '#374151' }}>🔔</Text>
                         </TouchableOpacity>
                         <TouchableOpacity 
                             className={`p-3 rounded-xl ${isDark ? 'bg-gray-800' : 'bg-white'} shadow`}
+                            onPress={() => {
+                                console.log('🔧 Navigating to Settings from PC Dashboard');
+                                navigation.navigate('Settings');
+                            }}
                         >
                             <Text style={{ fontSize: 24, color: isDark ? '#fff' : '#374151' }}>⚙️</Text>
                         </TouchableOpacity>
@@ -233,6 +245,56 @@ const DashboardScreenPC = () => {
                         columnWrapperStyle={gridColumns > 1 ? { justifyContent: 'space-between' } : undefined}
                     />
                 </View>
+
+                {/* Quick Actions - Solo para administradores */}
+                {user?.role_name === 'administrador' && (
+                    <View className="px-6 mb-8">
+                        <Text className={`text-2xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                            Acciones Rápidas
+                        </Text>
+                        <View className="flex-row space-x-4">
+                            <TouchableOpacity
+                                className={`flex-1 p-6 rounded-2xl shadow-lg ${isDark ? 'bg-gradient-to-r from-blue-800 to-blue-600' : 'bg-gradient-to-r from-blue-600 to-blue-500'}`}
+                                onPress={() => {
+                                    console.log('🔧 Navigating to Settings');
+                                    navigation.navigate('Settings');
+                                }}
+                            >
+                                <View className="flex-row items-center">
+                                    <Text style={{ fontSize: 32, marginRight: 16 }}>⚙️</Text>
+                                    <View className="flex-1">
+                                        <Text className="text-white text-lg font-bold">
+                                            Configuración
+                                        </Text>
+                                        <Text className="text-blue-100 text-sm">
+                                            Gestionar configuraciones del sistema
+                                        </Text>
+                                    </View>
+                                </View>
+                            </TouchableOpacity>
+                            
+                            <TouchableOpacity
+                                className={`flex-1 p-6 rounded-2xl shadow-lg ${isDark ? 'bg-gradient-to-r from-green-800 to-green-600' : 'bg-gradient-to-r from-green-600 to-green-500'}`}
+                                onPress={() => {
+                                    console.log('💬 Navigating to WhatsApp Config');
+                                    navigation.navigate('WhatsAppConfig');
+                                }}
+                            >
+                                <View className="flex-row items-center">
+                                    <Text style={{ fontSize: 32, marginRight: 16 }}>💬</Text>
+                                    <View className="flex-1">
+                                        <Text className="text-white text-lg font-bold">
+                                            WhatsApp
+                                        </Text>
+                                        <Text className="text-green-100 text-sm">
+                                            Configurar notificaciones
+                                        </Text>
+                                    </View>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                )}
 
                 {/* Activity Section */}
                 <View className="px-6 mb-8">

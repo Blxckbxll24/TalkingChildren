@@ -28,7 +28,7 @@ export class AuthService {
 
             return response;
         } catch (error: any) {
-            console.error('Error en login:', error);
+            
             throw this.handleError(error);
         }
     }
@@ -41,7 +41,7 @@ export class AuthService {
             const response = await apiClient.post<RegisterResponse>('/auth/register', userData);
             return response;
         } catch (error: any) {
-            console.error('Error en register:', error);
+            
             throw this.handleError(error);
         }
     }
@@ -61,7 +61,7 @@ export class AuthService {
 
             throw new Error('No se pudo obtener el perfil');
         } catch (error: any) {
-            console.error('Error obteniendo perfil:', error);
+            
             throw this.handleError(error);
         }
     }
@@ -89,7 +89,7 @@ export class AuthService {
             const token = await AsyncStorage.getItem(AuthService.TOKEN_KEY);
             return !!token;
         } catch (error) {
-            console.error('Error verificando autenticación:', error);
+            
             return false;
         }
     }
@@ -101,7 +101,7 @@ export class AuthService {
         try {
             return await AsyncStorage.getItem(AuthService.TOKEN_KEY);
         } catch (error) {
-            console.error('Error obteniendo token:', error);
+            
             return null;
         }
     }
@@ -114,7 +114,7 @@ export class AuthService {
             const userData = await AsyncStorage.getItem(AuthService.USER_KEY);
             return userData ? JSON.parse(userData) : null;
         } catch (error) {
-            console.error('Error obteniendo usuario almacenado:', error);
+            
             return null;
         }
     }

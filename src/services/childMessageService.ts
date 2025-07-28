@@ -13,10 +13,103 @@ export class ChildMessageService {
      */
     async getMyMessages(): Promise<ChildMessage[]> {
         try {
-            const response = await apiClient.get<ApiResponse<ChildMessage[]>>('/child-messages/my-messages');
-            return response.data || [];
+            console.log('🔍 Calling /child-messages/my-messages endpoint...');
+
+            // Agregar headers para evitar cache y forzar una respuesta completa
+            const response = await apiClient.get('/child-messages/my-messages', {
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache',
+                    'If-None-Match': '',  // Evitar cache ETags
+                    'If-Modified-Since': ''  // Evitar cache de última modificación
+                }
+            });
+
+            console.log('📤 Full API response:', JSON.stringify(response, null, 2));
+            console.log('📤 Response status:', response.status);
+            console.log('📤 Response headers:', response.headers);
+            console.log('📤 Raw API response data:', JSON.stringify(response.data, null, 2));
+
+            // Verificar que tenemos datos válidos
+            if (!response.data) {
+                console.warn('⚠️ No response.data found');
+                return [];
+            }
+
+            // Verificar si success existe y es true, o si no existe pero tenemos data válida
+            const hasValidSuccess = response.data.success === true || response.data.success === undefined;
+            if (response.data.success === false) {
+                console.warn('⚠️ Response success is explicitly false:', response.data.success);
+                return [];
+            }
+
+            console.log('✅ Success validation passed. success:', response.data.success, 'hasValidSuccess:', hasValidSuccess);
+
+            // Los datos pueden estar en response.data.data O directamente en response.data
+            let messagesArray = response.data.data;
+            if (!messagesArray && Array.isArray(response.data)) {
+                messagesArray = response.data;
+                console.log('📋 Using response.data directly as it is an array');
+            }
+
+            if (!messagesArray) {
+                console.warn('⚠️ No messages array found in response.data.data or response.data');
+                console.log('📊 Available keys in response.data:', Object.keys(response.data));
+                return [];
+            }
+
+            if (!Array.isArray(messagesArray)) {
+                console.warn('⚠️ Messages data is not an array:', typeof messagesArray, messagesArray);
+                return [];
+            }
+
+            console.log('✅ API Response data is valid array with', messagesArray.length, 'items');
+
+            // Transformar cada mensaje según la estructura real del backend
+            const transformedMessages: ChildMessage[] = messagesArray.map((item: any, index: number) => {
+                console.log(`🔄 Transforming message ${index + 1}:`, JSON.stringify(item, null, 2));
+
+                const transformedMessage = {
+                    id: item.id,
+                    child_id: 0, // No viene en la respuesta, pero no es necesario para la vista
+                    message_id: item.message?.id || 0,
+                    is_favorite: Boolean(item.is_favorite),
+                    assigned_at: item.assigned_at,
+                    assigned_by: item.assigned_by?.id,
+                    message: {
+                        id: item.message?.id || 0,
+                        text: item.message?.text || '',
+                        audio_url: item.message?.audio_url || '',
+                        category_id: item.message?.category?.id || 0,
+                        category_name: item.message?.category?.name || '',
+                        created_by: 0,
+                        is_active: true
+                    }
+                } as ChildMessage;
+
+                console.log(`✅ Transformed message ${index + 1}:`, JSON.stringify(transformedMessage, null, 2));
+                return transformedMessage;
+            });
+
+            console.log('🎯 Final transformed messages count:', transformedMessages.length);
+            console.log('🎯 Final transformed messages:', JSON.stringify(transformedMessages, null, 2));
+
+            if (transformedMessages.length === 0) {
+                console.error('❌ PROBLEM: Transformed messages array is empty but original data had items');
+                console.error('❌ Original data:', JSON.stringify(messagesArray, null, 2));
+            }
+
+            return transformedMessages;
+
         } catch (error: any) {
-            console.error('Error obteniendo mis mensajes:', error);
+            console.error('❌ Error in getMyMessages:', error);
+            console.error('❌ Error response:', error.response);
+            console.error('❌ Error status:', error.response?.status);
+            console.error('❌ Error data:', error.response?.data);
+
+            if (error.response?.status === 403) {
+                throw new Error('No tienes permisos para ver estos mensajes');
+            }
             throw this.handleError(error);
         }
     }
@@ -26,10 +119,13 @@ export class ChildMessageService {
      */
     async getFavoriteMessages(): Promise<ChildMessage[]> {
         try {
-            const response = await apiClient.get<ApiResponse<ChildMessage[]>>('/child-messages/favorites');
-            return response.data || [];
+            const response = await apiClient.get('/child-messages/favorites');
+            if (response.data && response.data.success && response.data.data) {
+                return response.data.data;
+            }
+            return [];
         } catch (error: any) {
-            console.error('Error obteniendo mensajes favoritos:', error);
+            console.error('Error in getFavoriteMessages:', error);
             throw this.handleError(error);
         }
     }
@@ -39,10 +135,13 @@ export class ChildMessageService {
      */
     async getMessagesByCategory(categoryId: number): Promise<ChildMessage[]> {
         try {
-            const response = await apiClient.get<ApiResponse<ChildMessage[]>>(`/child-messages/category/${categoryId}`);
-            return response.data || [];
+            const response = await apiClient.get(`/child-messages/category/${categoryId}`);
+            if (response.data && response.data.success && response.data.data) {
+                return response.data.data;
+            }
+            return [];
         } catch (error: any) {
-            console.error('Error obteniendo mensajes por categoría:', error);
+            console.error('Error in getMessagesByCategory:', error);
             throw this.handleError(error);
         }
     }
@@ -52,13 +151,46 @@ export class ChildMessageService {
      */
     async assignMessage(assignmentData: AssignMessageRequest): Promise<ChildMessage> {
         try {
-            const response = await apiClient.post<ApiResponse<ChildMessage>>('/child-messages/assign', assignmentData);
-            if (response.success && response.data) {
+            console.log('🔍 Assigning message:', assignmentData);
+
+            // Validar datos de entrada
+            if (!assignmentData.child_id || !assignmentData.message_id) {
+                throw new Error('child_id y message_id son requeridos');
+            }
+
+            const response = await apiClient.post('/child-messages/assign', assignmentData);
+
+            console.log('📤 Assignment response:', response);
+
+            if (response && response.success && response.data) {
                 return response.data;
             }
-            throw new Error(response.message || 'Error asignando mensaje');
+
+            // Si llegamos aquí, algo salió mal
+            const errorMessage = response?.message || 'Error desconocido al asignar mensaje';
+            console.error('❌ Assignment failed:', errorMessage);
+            throw new Error(errorMessage);
+
         } catch (error: any) {
-            console.error('Error asignando mensaje:', error);
+            console.error('❌ Error in assignMessage:', error);
+
+            // Manejar errores específicos del backend
+            if (error.response?.status === 409) {
+                throw new Error('El mensaje ya está asignado a este niño');
+            }
+
+            if (error.response?.status === 404) {
+                throw new Error('El mensaje o el niño no existe');
+            }
+
+            if (error.response?.status === 403) {
+                throw new Error('No tienes permisos para asignar mensajes a este niño');
+            }
+
+            if (error.response?.data?.message) {
+                throw new Error(error.response.data.message);
+            }
+
             throw this.handleError(error);
         }
     }
@@ -73,16 +205,23 @@ export class ChildMessageService {
                 throw new Error('ID de niño inválido');
             }
 
-            const response = await apiClient.get<ApiResponse<ChildMessage[]>>(`/child-messages/child/${childId}`);
-            return response.data || [];
+            const response = await apiClient.get(`/child-messages/child/${childId}`);
+            console.log('📥 Child messages response:', response);
+
+            if (response && response.success && response.data) {
+                return response.data;
+            }
+
+            console.warn('⚠️ Child messages response structure unexpected:', response);
+            return [];
         } catch (error: any) {
             // Si es un error 400, probablemente significa que no hay mensajes asignados
-            if (error.response?.status === 400) {
+            if (error.response?.status === 400 || error.response?.status === 404) {
                 console.log(`No hay mensajes asignados para el niño ${childId}`);
                 return [];
             }
 
-            console.error('Error obteniendo mensajes del niño:', error);
+            console.error('Error in getChildMessages:', error);
             throw this.handleError(error);
         }
     }
@@ -92,12 +231,12 @@ export class ChildMessageService {
      */
     async removeMessageAssignment(childId: number, messageId: number): Promise<void> {
         try {
-            const response = await apiClient.delete<ApiResponse>(`/child-messages/child/${childId}/message/${messageId}`);
-            if (!response.success) {
-                throw new Error(response.message || 'Error removiendo asignación');
+            const response = await apiClient.delete(`/child-messages/child/${childId}/message/${messageId}`);
+            if (response.data && !response.data.success) {
+                throw new Error(response.data.message || 'Error removiendo asignación');
             }
         } catch (error: any) {
-            console.error('Error removiendo asignación:', error);
+            console.error('Error in removeMessageAssignment:', error);
             throw this.handleError(error);
         }
     }
@@ -107,13 +246,32 @@ export class ChildMessageService {
      */
     async updateMessageAssignment(assignmentId: number, updateData: UpdateChildMessageRequest): Promise<ChildMessage> {
         try {
-            const response = await apiClient.put<ApiResponse<ChildMessage>>(`/child-messages/${assignmentId}`, updateData);
-            if (response.success && response.data) {
-                return response.data;
+            const response = await apiClient.put(`/child-messages/${assignmentId}`, updateData);
+            if (response.data && response.data.success && response.data.data) {
+                const item = response.data.data;
+
+                // Transformar la respuesta del backend al formato que espera el frontend
+                return {
+                    id: item.id,
+                    child_id: item.child_id || 0,
+                    message_id: item.message?.id || 0,
+                    is_favorite: item.is_favorite,
+                    assigned_at: item.assigned_at,
+                    assigned_by: item.assigned_by?.id,
+                    message: {
+                        id: item.message?.id || 0,
+                        text: item.message?.text || '',
+                        audio_url: item.message?.audio_url,
+                        category_id: item.message?.category?.id || 0,
+                        category_name: item.message?.category?.name || '',
+                        created_by: 0,
+                        is_active: true
+                    }
+                } as ChildMessage;
             }
-            throw new Error(response.message || 'Error actualizando asignación');
+            throw new Error(response.data?.message || 'Error actualizando asignación');
         } catch (error: any) {
-            console.error('Error actualizando asignación:', error);
+            console.error('Error in updateMessageAssignment:', error);
             throw this.handleError(error);
         }
     }
@@ -151,7 +309,7 @@ export class ChildMessageService {
             );
             return assignments;
         } catch (error: any) {
-            console.error('Error asignando múltiples mensajes:', error);
+            console.error('Error in assignMultipleMessages:', error);
             throw this.handleError(error);
         }
     }
@@ -183,7 +341,7 @@ export class ChildMessageService {
 
             return stats;
         } catch (error: any) {
-            console.error('Error obteniendo estadísticas:', error);
+            console.error('Error in getChildMessageStats:', error);
             throw this.handleError(error);
         }
     }
@@ -201,7 +359,7 @@ export class ChildMessageService {
                 childMessage.message?.creator_name?.toLowerCase().includes(searchTerm.toLowerCase())
             );
         } catch (error: any) {
-            console.error('Error buscando mensajes:', error);
+            console.error('Error in searchAssignedMessages:', error);
             throw this.handleError(error);
         }
     }

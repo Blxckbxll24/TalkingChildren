@@ -5,6 +5,7 @@ type ESP32Status = {
     connected: boolean;
     battery?: number;
     category?: number;
+    system_on?: boolean;
     lastHeartbeat?: number;
 };
 
@@ -143,6 +144,7 @@ export const useESP32WebSocketStore = create<State>((set, get) => ({
                         ...currentState.status,
                         battery: msg.battery,
                         category: msg.category,
+                        system_on: msg.system_on,
                         lastHeartbeat: Date.now()
                     }
                 });
@@ -177,9 +179,21 @@ export const useESP32WebSocketStore = create<State>((set, get) => ({
                     connecting: false
                 });
             }
-            else if (msg.type === 'error') {
+            else if (msg.type === 'system_state_changed') {
+                console.log('🔋 System state changed:', msg.system_on ? 'ON' : 'OFF');
                 set({
-                    error: msg.message,
+                    status: {
+                        ...get().status,
+                        system_on: msg.system_on,
+                        battery: msg.battery,
+                        category: msg.category
+                    }
+                });
+            }
+            else if (msg.type === 'error') {
+                // NO mostrar errores en la UI, solo logear
+                console.log('⚠️ WebSocket error received:', msg.message);
+                set({
                     connecting: false
                 });
             }
@@ -289,7 +303,7 @@ export const useESP32WebSocketStore = create<State>((set, get) => ({
             console.log(`✅ Button ${buttonNumber} configured successfully (using local audio)`);
             return true;
         } catch (error) {
-            console.error(`❌ Error configuring button ${buttonNumber}:`, error);
+            
             throw error;
         }
     },
@@ -317,7 +331,7 @@ export const useESP32WebSocketStore = create<State>((set, get) => ({
             console.log(`✅ Button ${buttonNumber} configured successfully with full transfer`);
             return true;
         } catch (error) {
-            console.error(`❌ Error configuring button ${buttonNumber}:`, error);
+            
             throw error;
         }
     },

@@ -6,6 +6,14 @@ import {
     ApiResponse
 } from '../types/api';
 
+export interface ChildStats {
+    childId: number;
+    childName: string;
+    messagesCount: number;
+    favoriteMessagesCount: number;
+    categoriesCount: number;
+}
+
 export class RelationService {
     /**
      * Crear nueva relación tutor-niño
@@ -13,30 +21,34 @@ export class RelationService {
     async createRelation(relationData: CreateRelationRequest): Promise<RelationResponse> {
         try {
             const response = await apiClient.post<ApiResponse<RelationResponse>>('/relations', relationData);
+
             if (response.success && response.data) {
                 return response.data;
             }
             throw new Error(response.message || 'Error creando relación');
         } catch (error: any) {
-            console.error('Error creando relación:', error);
+            console.error('❌ Error creating relation:', error);
             throw this.handleError(error);
         }
-    }
-
-    /**
+    }    /**
      * Obtener niños asignados al tutor autenticado
      */
     async getMyChildren(): Promise<RelationResponse[]> {
         try {
             const response = await apiClient.get<ApiResponse<RelationResponse[]>>('/relations/my-children');
-            return response.data || [];
+            console.log('📥 My children response:', response);
+
+            if (response.success && response.data) {
+                return response.data;
+            }
+
+            console.warn('⚠️ My children response structure unexpected:', response);
+            return [];
         } catch (error: any) {
-            console.error('Error obteniendo mis niños:', error);
+            console.error('❌ Error getting my children:', error);
             throw this.handleError(error);
         }
-    }
-
-    /**
+    }    /**
      * Obtener tutores asignados al niño autenticado
      */
     async getMyTutors(): Promise<RelationResponse[]> {
@@ -44,7 +56,7 @@ export class RelationService {
             const response = await apiClient.get<ApiResponse<RelationResponse[]>>('/relations/my-tutors');
             return response.data || [];
         } catch (error: any) {
-            console.error('Error obteniendo mis tutores:', error);
+
             throw this.handleError(error);
         }
     }
@@ -57,7 +69,7 @@ export class RelationService {
             const response = await apiClient.get<ApiResponse<RelationResponse[]>>('/relations');
             return response.data || [];
         } catch (error: any) {
-            console.error('Error obteniendo relaciones:', error);
+
             throw this.handleError(error);
         }
     }
@@ -74,7 +86,7 @@ export class RelationService {
                 throw new Error(response.data.message || 'Error eliminando relación');
             }
         } catch (error: any) {
-            console.error('Error eliminando relación:', error);
+
             throw this.handleError(error);
         }
     }
@@ -89,7 +101,7 @@ export class RelationService {
                 throw new Error(response.message || 'Error eliminando relación');
             }
         } catch (error: any) {
-            console.error('Error eliminando relación por ID:', error);
+
             throw this.handleError(error);
         }
     }
@@ -105,7 +117,7 @@ export class RelationService {
             }
             throw new Error(response.message || 'Error obteniendo estadísticas');
         } catch (error: any) {
-            console.error('Error obteniendo estadísticas:', error);
+
             throw this.handleError(error);
         }
     }
@@ -121,7 +133,7 @@ export class RelationService {
             }
             throw new Error(response.message || 'Error vinculando niño');
         } catch (error: any) {
-            console.error('Error vinculando niño:', error);
+
             throw this.handleError(error);
         }
     }
@@ -136,7 +148,7 @@ export class RelationService {
                 throw new Error(response.message || 'Error desvinculando niño');
             }
         } catch (error: any) {
-            console.error('Error desvinculando niño:', error);
+
             throw this.handleError(error);
         }
     }
@@ -149,8 +161,27 @@ export class RelationService {
             const response = await apiClient.get<ApiResponse<{ exists: boolean }>>(`/relations/check/${tutorId}/${childId}`);
             return response.data?.exists || false;
         } catch (error: any) {
-            console.error('Error verificando relación:', error);
+            console.error('❌ Error checking relation:', error);
             return false;
+        }
+    }
+
+    /**
+     * Obtener estadísticas de un niño específico
+     */
+    async getChildStats(childId: number): Promise<ChildStats> {
+        try {
+            const response = await apiClient.get<ApiResponse<ChildStats>>(`/relations/child/${childId}/stats`);
+            console.log('📥 Child stats response:', response);
+
+            if (response.success && response.data) {
+                return response.data;
+            }
+
+            throw new Error(response.message || 'Error obteniendo estadísticas del niño');
+        } catch (error: any) {
+            console.error('❌ Error getting child stats:', error);
+            throw this.handleError(error);
         }
     }
 

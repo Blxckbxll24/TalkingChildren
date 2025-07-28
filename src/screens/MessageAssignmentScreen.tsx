@@ -68,7 +68,7 @@ const MessageAssignmentScreen = () => {
       setAssignments(allAssignments);
       
     } catch (error) {
-      console.error('Error loading data:', error);
+      
       Alert.alert('Error', 'No se pudieron cargar los datos');
     } finally {
       setLoading(false);
@@ -84,6 +84,11 @@ const MessageAssignmentScreen = () => {
     if (!selectedMessage) return;
 
     try {
+      console.log('🔍 Assigning message:', {
+        child_id: childId,
+        message_id: selectedMessage.id
+      });
+
       await childMessageService.assignMessage({
         child_id: childId,
         message_id: selectedMessage.id
@@ -92,10 +97,17 @@ const MessageAssignmentScreen = () => {
       Alert.alert('Éxito', 'Mensaje asignado exitosamente');
       setShowAssignModal(false);
       setSelectedMessage(null);
-      loadData();
+      loadData(); // Recargar datos para actualizar la vista
     } catch (error: any) {
-      console.error('Error assigning message:', error);
-      Alert.alert('Error', error.message || 'No se pudo asignar el mensaje');
+      console.error('❌ Error assigning message:', error);
+      
+      let errorMessage = 'No se pudo asignar el mensaje';
+      
+      if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      Alert.alert('Error', errorMessage);
     }
   };
 
@@ -114,7 +126,7 @@ const MessageAssignmentScreen = () => {
               Alert.alert('Éxito', 'Asignación eliminada exitosamente');
               loadData();
             } catch (error) {
-              console.error('Error unassigning message:', error);
+              
               Alert.alert('Error', 'No se pudo eliminar la asignación');
             }
           }

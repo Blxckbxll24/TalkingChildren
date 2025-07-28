@@ -75,6 +75,9 @@ export interface Message {
     is_favorite?: boolean;
     created_at?: string;
     updated_at?: string;
+    // Información de asignación
+    assigned_children?: string;  // Concatenación del backend
+    assigned_children_list?: Array<{ name: string, id: number }>;  // Procesado en el frontend
 }
 
 export interface ChildMessage {

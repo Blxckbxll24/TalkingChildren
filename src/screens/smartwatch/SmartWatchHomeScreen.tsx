@@ -72,7 +72,7 @@ const SmartWatchHomeScreen = () => {
 
       setMessages(smartWatchMessages);
     } catch (error) {
-      console.error('Error cargando mensajes:', error);
+      
       Alert.alert('Error', 'No se pudieron cargar los mensajes');
       // En caso de error, mostrar algunos mensajes por defecto
       setMessages([
@@ -133,7 +133,7 @@ const SmartWatchHomeScreen = () => {
         }, 2000);
       }
     } catch (error) {
-      console.error('Error reproduciendo mensaje:', error);
+      
       Alert.alert('Error', 'No se pudo reproducir el mensaje');
       setPlayingId(null);
     }
@@ -161,7 +161,7 @@ const SmartWatchHomeScreen = () => {
         );
       }
     } catch (error) {
-      console.error('Error actualizando favorito:', error);
+      
       Alert.alert('Error', 'No se pudo actualizar el favorito');
     }
   };

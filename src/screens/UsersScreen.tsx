@@ -17,7 +17,7 @@ import BottomNavBar from '../components/Navbar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // Configuración de la URL base
-const API_BASE_URL = __DEV__ ? `http://${API_URL}/api` : 'https://tu-dominio-produccion.com/api';
+const API_BASE_URL = `http://${API_URL}/api`;
 
 interface User {
   id: number;
@@ -126,7 +126,7 @@ const UsersScreen = () => {
         return storedToken;
       }
     } catch (error) {
-      console.error('Error obteniendo token:', error);
+      
     }
     return '';
   }, []);

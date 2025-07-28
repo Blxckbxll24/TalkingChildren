@@ -151,7 +151,7 @@ export const useESP32StoreWithTransfer = create<ESP32Store>()(
             },
 
             onError: (error: string) => {
-                console.error('❌ ESP32Store: WebSocket error:', error);
+                
                 set({
                     connectionError: error,
                     isConnecting: false
@@ -237,7 +237,7 @@ export const useESP32StoreWithTransfer = create<ESP32Store>()(
 
                     return success;
                 } catch (error) {
-                    console.error('❌ ESP32Store: Connection error:', error);
+                    
                     set({
                         isConnecting: false,
                         connectionError: error instanceof Error ? error.message : 'Unknown connection error'
@@ -311,7 +311,7 @@ export const useESP32StoreWithTransfer = create<ESP32Store>()(
 
                     return success;
                 } catch (error) {
-                    console.error('❌ ESP32Store: Audio transfer error:', error);
+                    
                     set({
                         audioTransfer: {
                             filename,

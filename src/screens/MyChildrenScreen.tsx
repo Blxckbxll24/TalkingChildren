@@ -10,13 +10,13 @@ import {
   TextInput,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTheme } from '../context/ThemeContext';
 import { useAuthStore, ROLES } from '../stores/authStore';
 import { useRelationStore } from '../stores/relationStore';
+import { childMessageService } from '../services/childMessageService';
+import { relationService } from '../services/relationService';
 import { RelationResponse } from '../types/api';
 import Navbar from '../components/Navbar';
-import type { RootStackParamList } from '../navigation/AppNavigator';
 import { 
   Users, 
   Plus, 
@@ -32,7 +32,7 @@ import {
 const MyChildrenScreen = () => {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation = useNavigation();
   const { user } = useAuthStore();
   
   const {
@@ -45,7 +45,7 @@ const MyChildrenScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [showLinkModal, setShowLinkModal] = useState(false);
-  const [linkChildId, setLinkChildId] = useState('');
+  const [messagesCount, setMessagesCount] = useState<{ [childId: number]: number }>({});
 
   // Solo tutores y administradores pueden acceder
   const canAccess = user?.role_id === ROLES.TUTOR || user?.role_id === ROLES.ADMIN;
@@ -56,9 +56,45 @@ const MyChildrenScreen = () => {
     }
   }, [canAccess, loadMyChildren]);
 
+  useEffect(() => {
+    // Cargar conteos de mensajes cuando se cargan los niños
+    if (myChildren.length > 0) {
+      loadMessagesCount();
+    }
+  }, [myChildren]);
+
+  const loadMessagesCount = async () => {
+    try {
+      const counts: { [childId: number]: number } = {};
+      
+      for (const relation of myChildren) {
+        try {
+          // Usar el nuevo endpoint de estadísticas para mejor eficiencia
+          const stats = await relationService.getChildStats(relation.child.id);
+          counts[relation.child.id] = stats.messagesCount;
+        } catch (error) {
+          console.warn(`Error loading stats for child ${relation.child.id}:`, error);
+          // Fallback al método anterior
+          try {
+            const messages = await childMessageService.getChildMessages(relation.child.id);
+            counts[relation.child.id] = messages.length;
+          } catch (fallbackError) {
+            console.warn(`Fallback also failed for child ${relation.child.id}:`, fallbackError);
+            counts[relation.child.id] = 0;
+          }
+        }
+      }
+      
+      setMessagesCount(counts);
+    } catch (error) {
+      console.error('Error loading messages count:', error);
+    }
+  };
+
   const handleRefresh = async () => {
     setRefreshing(true);
     await loadMyChildren();
+    await loadMessagesCount();
     setRefreshing(false);
   };
 
@@ -78,11 +114,13 @@ const MyChildrenScreen = () => {
   };
 
   const handleViewChildMessages = (childId: number, childName: string) => {
-    navigation.navigate('ChildMessagesView', { childId, childName });
+    // navigation.navigate('ChildMessagesView', { childId, childName });
+    Alert.alert('Información', `Ver mensajes de ${childName} - Función en desarrollo`);
   };
 
   const handleAssignMessages = (childId: number, childName: string) => {
-    navigation.navigate('AssignMessages', { childId, childName });
+    // navigation.navigate('AssignMessages', { childId, childName });
+    Alert.alert('Información', `Asignar mensajes a ${childName} - Función en desarrollo`);
   };
 
   const filteredChildren = myChildren.filter(relation =>
@@ -90,56 +128,63 @@ const MyChildrenScreen = () => {
     relation.child.email.toLowerCase().includes(searchText.toLowerCase())
   );
 
-  const renderChildItem = ({ item }: { item: RelationResponse }) => (
-    <View className={`p-4 m-2 rounded-xl border ${
-      isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-    }`}>
-      <View className="flex-row items-center justify-between">
-        <View className="flex-row items-center flex-1">
-          <View className="w-12 h-12 rounded-full bg-blue-500 items-center justify-center mr-3">
-            <Text className="text-white font-bold text-lg">
-              {item.child.name.charAt(0).toUpperCase()}
-            </Text>
+  const renderChildItem = ({ item }: { item: RelationResponse }) => {
+    const childMessagesCount = messagesCount[item.child.id] || 0;
+    
+    return (
+      <View className={`p-4 m-2 rounded-xl border ${
+        isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+      }`}>
+        <View className="flex-row items-center justify-between">
+          <View className="flex-row items-center flex-1">
+            <View className="w-12 h-12 rounded-full bg-blue-500 items-center justify-center mr-3">
+              <Text className="text-white font-bold text-lg">
+                {item.child.name.charAt(0).toUpperCase()}
+              </Text>
+            </View>
+            
+            <View className="flex-1">
+              <Text className={`font-semibold text-lg ${isDark ? 'text-white' : 'text-gray-800'}`}>
+                {item.child.name}
+              </Text>
+              <Text className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                {item.child.email}
+              </Text>
+              <Text className={`text-xs mt-1 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
+                Vinculado: {new Date(item.created_at).toLocaleDateString()}
+              </Text>
+              <Text className={`text-xs mt-1 font-semibold ${isDark ? 'text-blue-400' : 'text-blue-600'}`}>
+                Mensajes asignados: {childMessagesCount}
+              </Text>
+            </View>
           </View>
-          
-          <View className="flex-1">
-            <Text className={`font-semibold text-lg ${isDark ? 'text-white' : 'text-gray-800'}`}>
-              {item.child.name}
-            </Text>
-            <Text className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-              {item.child.email}
-            </Text>
-            <Text className={`text-xs mt-1 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
-              Vinculado: {new Date(item.created_at).toLocaleDateString()}
-            </Text>
-          </View>
-        </View>
 
-        <View className="flex-row">
-          <TouchableOpacity
-            onPress={() => handleViewChildMessages(item.child.id, item.child.name)}
-            className="p-2 mr-2"
-          >
-            <Eye size={20} color={isDark ? '#9CA3AF' : '#6B7280'} />
-          </TouchableOpacity>
-          
-          <TouchableOpacity
-            onPress={() => handleAssignMessages(item.child.id, item.child.name)}
-            className="p-2 mr-2"
-          >
-            <MessageCircle size={20} color="#3B82F6" />
-          </TouchableOpacity>
-          
-          <TouchableOpacity
-            onPress={() => handleUnlinkChild(item)}
-            className="p-2"
-          >
-            <Unlink size={20} color="#EF4444" />
-          </TouchableOpacity>
+          <View className="flex-row">
+            <TouchableOpacity
+              onPress={() => handleViewChildMessages(item.child.id, item.child.name)}
+              className="p-2 mr-2"
+            >
+              <Eye size={20} color={isDark ? '#9CA3AF' : '#6B7280'} />
+            </TouchableOpacity>
+            
+            <TouchableOpacity
+              onPress={() => handleAssignMessages(item.child.id, item.child.name)}
+              className="p-2 mr-2"
+            >
+              <MessageCircle size={20} color="#3B82F6" />
+            </TouchableOpacity>
+            
+            <TouchableOpacity
+              onPress={() => handleUnlinkChild(item)}
+              className="p-2"
+            >
+              <Unlink size={20} color="#EF4444" />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
-    </View>
-  );
+    );
+  };
 
   const renderEmptyState = () => (
     <View className="flex-1 justify-center items-center p-8">
@@ -159,62 +204,104 @@ const MyChildrenScreen = () => {
     </View>
   );
 
-  const LinkChildModal = () => (
-    <Modal
-      visible={showLinkModal}
-      transparent
-      animationType="slide"
-      onRequestClose={() => setShowLinkModal(false)}
-    >
-      <View className="flex-1 justify-center items-center bg-black bg-opacity-50">
-        <View className={`w-11/12 p-6 rounded-xl ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
-          <Text className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>
-            Vincular Niño
-          </Text>
-          
-          <Text className={`mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-            ID del Niño
-          </Text>
-          <TextInput
-            value={linkChildId}
-            onChangeText={setLinkChildId}
-            placeholder="Ingresa el ID del niño"
-            placeholderTextColor={isDark ? '#9CA3AF' : '#6B7280'}
-            keyboardType="numeric"
-            className={`w-full px-4 py-3 rounded-xl border mb-4 ${
-              isDark 
-                ? 'bg-gray-700 border-gray-600 text-white' 
-                : 'bg-gray-50 border-gray-300 text-black'
-            }`}
-          />
-          
-          <View className="flex-row justify-end">
-            <TouchableOpacity
-              onPress={() => {
-                setShowLinkModal(false);
-                setLinkChildId('');
-              }}
-              className="px-4 py-2 mr-2"
-            >
-              <Text className={isDark ? 'text-gray-400' : 'text-gray-600'}>Cancelar</Text>
-            </TouchableOpacity>
+  const LinkChildModal = () => {
+    const [searchEmail, setSearchEmail] = useState('');
+    const [linkLoading, setLinkLoading] = useState(false);
+    
+    const handleLinkChild = async () => {
+      if (!searchEmail.trim()) {
+        Alert.alert('Error', 'Por favor ingresa el email del niño');
+        return;
+      }
+      
+      setLinkLoading(true);
+      try {
+        // Aquí deberías llamar a tu servicio para buscar y vincular el niño
+        // Por ahora simulo la funcionalidad
+        Alert.alert(
+          'Información', 
+          `Para vincular al niño con email "${searchEmail}", el niño debe estar registrado en el sistema.\n\nSi no está registrado, pídele al niño que se registre primero en la aplicación.`,
+          [
+            { text: 'Entendido', onPress: () => {
+              setShowLinkModal(false);
+              setSearchEmail('');
+            }}
+          ]
+        );
+      } catch (error) {
+        Alert.alert('Error', 'No se pudo vincular al niño. Verifica que esté registrado.');
+      } finally {
+        setLinkLoading(false);
+      }
+    };
+
+    return (
+      <Modal
+        visible={showLinkModal}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowLinkModal(false)}
+      >
+        <View className="flex-1 justify-center items-center bg-black bg-opacity-50">
+          <View className={`w-11/12 p-6 rounded-xl ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
+            <Text className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>
+              Vincular Niño
+            </Text>
             
-            <TouchableOpacity
-              onPress={() => {
-                // Aquí implementarías la lógica de vincular
-                // por ahora solo cerramos el modal
-                setShowLinkModal(false);
-                setLinkChildId('');
-              }}
-              className="bg-blue-600 px-4 py-2 rounded-lg"
-            >
-              <Text className="text-white">Vincular</Text>
-            </TouchableOpacity>
+            <View className={`p-4 rounded-lg mb-4 ${isDark ? 'bg-blue-900' : 'bg-blue-50'}`}>
+              <Text className={`text-sm ${isDark ? 'text-blue-200' : 'text-blue-800'}`}>
+                💡 Para vincular a un niño, este debe estar registrado en el sistema. Si no aparece, pídele que se registre primero.
+              </Text>
+            </View>
+            
+            <Text className={`mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+              Email del Niño
+            </Text>
+            <TextInput
+              value={searchEmail}
+              onChangeText={setSearchEmail}
+              placeholder="ejemplo@correo.com"
+              placeholderTextColor={isDark ? '#9CA3AF' : '#6B7280'}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              className={`w-full px-4 py-3 rounded-xl border mb-4 ${
+                isDark 
+                  ? 'bg-gray-700 border-gray-600 text-white' 
+                  : 'bg-gray-50 border-gray-300 text-black'
+              }`}
+            />
+            
+            <View className="flex-row justify-end">
+              <TouchableOpacity
+                onPress={() => {
+                  setShowLinkModal(false);
+                  setSearchEmail('');
+                }}
+                disabled={linkLoading}
+                className="px-4 py-2 mr-2"
+              >
+                <Text className={isDark ? 'text-gray-400' : 'text-gray-600'}>Cancelar</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity
+                onPress={handleLinkChild}
+                disabled={linkLoading || !searchEmail.trim()}
+                className={`px-6 py-2 rounded-xl ${
+                  linkLoading || !searchEmail.trim() 
+                    ? 'bg-gray-400' 
+                    : 'bg-blue-600'
+                }`}
+              >
+                <Text className="text-white font-semibold">
+                  {linkLoading ? 'Buscando...' : 'Vincular'}
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </View>
-    </Modal>
-  );
+      </Modal>
+    );
+  };
 
   if (!canAccess) {
     return (
@@ -228,7 +315,12 @@ const MyChildrenScreen = () => {
 
   return (
     <View className={`flex-1 ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
-      <Navbar title="Mis Niños" />
+      {/* Header */}
+      <View className={`px-4 py-6 ${isDark ? 'bg-gray-800' : 'bg-white'} border-b ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
+        <Text className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+          Mis Niños
+        </Text>
+      </View>
       
       {/* Barra de búsqueda */}
       <View className="p-4">
@@ -280,6 +372,7 @@ const MyChildrenScreen = () => {
       )}
 
       <LinkChildModal />
+      <Navbar theme={theme} />
     </View>
   );
 };

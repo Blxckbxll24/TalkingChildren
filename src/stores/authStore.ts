@@ -131,7 +131,7 @@ export const useAuthStore = create<AuthState>()(
                         text2: 'Has cerrado sesión correctamente',
                     });
                 } catch (error: any) {
-                    console.error('Error en logout:', error);
+                    
                     // Incluso si hay error, limpiar el estado local
                     set({
                         user: null,
@@ -173,7 +173,7 @@ export const useAuthStore = create<AuthState>()(
                         isLoading: false,
                     });
                 } catch (error) {
-                    console.error('Error cargando autenticación:', error);
+                    
                     set({
                         user: null,
                         isAuthenticated: false,
@@ -188,7 +188,7 @@ export const useAuthStore = create<AuthState>()(
                     const user = await authService.refreshUserData();
                     set({ user });
                 } catch (error: any) {
-                    console.error('Error refrescando perfil:', error);
+                    
                     // Si falla refrescar perfil, posiblemente el token expiró
                     await get().logout();
                 }

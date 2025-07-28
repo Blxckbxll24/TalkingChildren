@@ -53,7 +53,7 @@ class MessagesService {
 
             if (!response.ok) {
                 const errorText = await response.text();
-                console.error('❌ Response error:', errorText);
+                
                 throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
             }
 
@@ -66,7 +66,7 @@ class MessagesService {
                 throw new Error(result.message || 'Error al obtener mensajes');
             }
         } catch (error: any) {
-            console.error('❌ Error fetching messages:', error.message || error);
+            
 
             // Provide more specific error messages
             if (error.message?.includes('Network request failed')) {
@@ -140,7 +140,7 @@ class MessagesService {
 
             return arrayBuffer;
         } catch (error) {
-            console.error('❌ Error downloading audio:', error);
+            
             throw error;
         }
     }
@@ -186,7 +186,7 @@ class MessagesService {
                 createdBy: message.creator_name
             };
         } catch (error) {
-            console.error('❌ Error preparing audio for ESP32:', error);
+            
             throw error;
         }
     }

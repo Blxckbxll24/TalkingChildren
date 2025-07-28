@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTheme } from '../context/ThemeContext';
@@ -8,6 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuthStore } from '../stores/authStore';
 import { useESP32WebSocketStore } from '../stores/esp32WebSocketStore';
 import { RootStackParamList } from '../navigation/AdaptiveAppNavigator';
+import { dashboardService, DashboardStats, DashboardActivity } from '../services/dashboardService';
 
 type DashboardNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -34,66 +35,162 @@ const DashboardScreen = () => {
     const esp32Status = status;
     
     const [loading, setLoading] = useState(true);
+    const [stats, setStats] = useState<DashboardStats>({});
+    const [activity, setActivity] = useState<DashboardActivity[]>([]);
 
     useEffect(() => {
-        // Simular carga de datos
-        const timer = setTimeout(() => {
-            setLoading(false);
-        }, 1000);
-        
-        return () => clearTimeout(timer);
+        loadDashboardData();
     }, []);
 
+    const loadDashboardData = async () => {
+        try {
+            setLoading(true);
+            const [statsData, activityData] = await Promise.all([
+                dashboardService.getStats(),
+                dashboardService.getActivity()
+            ]);
+            setStats(statsData);
+            setActivity(activityData);
+        } catch (error) {
+            console.error('Error loading dashboard data:', error);
+            Alert.alert('Error', 'No se pudieron cargar los datos del dashboard');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const getStatsData = (): StatItem[] => {
-        const userRole = user?.role_name || 'child';
+        const userRole = user?.role_name || 'niño';
         
-        if (userRole === 'admin') {
+        if (userRole === 'administrador') {
             return [
-                { id: '1', title: 'Total Mensajes', value: 50, bgColorLight: 'bg-blue-100', bgColorDark: 'bg-blue-800' },
-                { id: '2', title: 'Mensaje Popular', value: '"¡Hola!"', bgColorLight: 'bg-green-100', bgColorDark: 'bg-green-800', textStyle: { fontSize: 14 }, isItalic: true },
-                { id: '3', title: 'Categorías', value: 8, bgColorLight: 'bg-purple-100', bgColorDark: 'bg-purple-800' },
-                { id: '4', title: 'Usuarios', value: 25, bgColorLight: 'bg-yellow-100', bgColorDark: 'bg-yellow-800' }
+                { 
+                    id: '1', 
+                    title: 'Total Usuarios', 
+                    value: stats.totalUsers || 0, 
+                    bgColorLight: 'bg-blue-100', 
+                    bgColorDark: 'bg-blue-800' 
+                },
+                { 
+                    id: '2', 
+                    title: 'Total Mensajes', 
+                    value: stats.totalMessagesAdmin || 0, 
+                    bgColorLight: 'bg-green-100', 
+                    bgColorDark: 'bg-green-800' 
+                },
+                { 
+                    id: '3', 
+                    title: 'Categorías', 
+                    value: stats.totalCategories || 0, 
+                    bgColorLight: 'bg-purple-100', 
+                    bgColorDark: 'bg-purple-800' 
+                },
+                { 
+                    id: '4', 
+                    title: 'Relaciones', 
+                    value: stats.totalRelations || 0, 
+                    bgColorLight: 'bg-yellow-100', 
+                    bgColorDark: 'bg-yellow-800' 
+                }
             ];
         } else if (userRole === 'tutor') {
             return [
-                { id: '1', title: 'Mis Mensajes', value: 15, bgColorLight: 'bg-blue-100', bgColorDark: 'bg-blue-800' },
-                { id: '2', title: 'Favorito', value: '"¡Buenos días!"', bgColorLight: 'bg-green-100', bgColorDark: 'bg-green-800', textStyle: { fontSize: 14 }, isItalic: true },
-                { id: '3', title: 'Categorías', value: 5, bgColorLight: 'bg-purple-100', bgColorDark: 'bg-purple-800' },
-                { id: '4', title: 'Mis Niños', value: 3, bgColorLight: 'bg-yellow-100', bgColorDark: 'bg-yellow-800' }
+                { 
+                    id: '1', 
+                    title: 'Mis Mensajes', 
+                    value: stats.myMessages || 0, 
+                    bgColorLight: 'bg-blue-100', 
+                    bgColorDark: 'bg-blue-800' 
+                },
+                { 
+                    id: '2', 
+                    title: 'Mis Niños', 
+                    value: stats.myChildren || 0, 
+                    bgColorLight: 'bg-green-100', 
+                    bgColorDark: 'bg-green-800' 
+                },
+                { 
+                    id: '3', 
+                    title: 'Mensajes Asignados', 
+                    value: stats.assignedMessages || 0, 
+                    bgColorLight: 'bg-purple-100', 
+                    bgColorDark: 'bg-purple-800' 
+                },
+                { 
+                    id: '4', 
+                    title: 'ESP32 Estado', 
+                    value: isConnected ? 'Conectado' : 'Desconectado', 
+                    bgColorLight: 'bg-yellow-100', 
+                    bgColorDark: 'bg-yellow-800',
+                    textStyle: { fontSize: 14 }, 
+                    isItalic: true 
+                }
             ];
         } else {
+            // Para rol 'niño' - datos reales del dashboard
             return [
-                { id: '1', title: 'Mis Mensajes', value: 0, bgColorLight: 'bg-blue-100', bgColorDark: 'bg-blue-800' },
-                { id: '2', title: 'Favorito', value: 'Ninguno aún', bgColorLight: 'bg-green-100', bgColorDark: 'bg-green-800', textStyle: { fontSize: 14 }, isItalic: true },
-                { id: '3', title: 'Categorías', value: 8, bgColorLight: 'bg-purple-100', bgColorDark: 'bg-purple-800' },
-                { id: '4', title: 'Usados Hoy', value: 0, bgColorLight: 'bg-yellow-100', bgColorDark: 'bg-yellow-800' }
+                { 
+                    id: '1', 
+                    title: 'Mis Mensajes', 
+                    value: stats.totalMessages || 0, 
+                    bgColorLight: 'bg-blue-100', 
+                    bgColorDark: 'bg-blue-800' 
+                },
+                { 
+                    id: '2', 
+                    title: 'Favoritos', 
+                    value: stats.favoriteMessages || 0, 
+                    bgColorLight: 'bg-green-100', 
+                    bgColorDark: 'bg-green-800' 
+                },
+                { 
+                    id: '3', 
+                    title: 'Categorías', 
+                    value: stats.totalCategories || 0, 
+                    bgColorLight: 'bg-purple-100', 
+                    bgColorDark: 'bg-purple-800' 
+                },
+                { 
+                    id: '4', 
+                    title: 'Total Aprendido', 
+                    value: (stats.totalMessages || 0) + (stats.favoriteMessages || 0), 
+                    bgColorLight: 'bg-yellow-100', 
+                    bgColorDark: 'bg-yellow-800' 
+                }
             ];
         }
     };
 
     const getRecentActivity = (): string[] => {
-        const userRole = user?.role_name || 'child';
+        // Usar la actividad real del backend si está disponible
+        if (activity && activity.length > 0) {
+            return activity.map(item => item.text || 'Actividad reciente');
+        }
+
+        // Fallback con mensajes por rol
+        const userRole = user?.role_name || 'niño';
         
-        if (userRole === 'admin') {
+        if (userRole === 'administrador') {
             return [
-                'Nuevo tutor registrado',
-                'Categoría "Saludos" actualizada',
-                'Sistema funcionando correctamente',
-                '5 nuevos mensajes creados'
+                'Sistema inicializado',
+                'Esperando actividad...',
+                'Dashboard cargado',
+                'Sin actividad reciente'
             ];
         } else if (userRole === 'tutor') {
             return [
-                'Mensaje asignado a Ana',
-                'Categoría "Emociones" configurada',
-                'Niño Carlos practicó 3 frases',
-                'Nueva sesión completada'
+                'Panel de tutor cargado',
+                'Esperando interacciones...',
+                'Sistema listo',
+                'Sin actividad reciente'
             ];
         } else {
+            // Para niños - más encouraging
             return [
-                'Practiqué 5 frases nuevas',
-                'Mi mensaje favorito cambió',
-                'Completé mis ejercicios',
-                '¡Buen trabajo hoy!'
+                `¡Hola ${user?.name || 'pequeño'}! ¿Listo para practicar?`,
+                'Explora tus mensajes favoritos',
+                'Prueba a reproducir diferentes sonidos',
+                '¡Sigue practicando para mejorar!'
             ];
         }
     };
@@ -102,7 +199,7 @@ const DashboardScreen = () => {
         const userRole = user?.role_name || 'child';
         const userName = user?.name || 'Usuario';
         
-        if (userRole === 'admin') return 'Panel de Administración';
+        if (userRole === 'administrador') return 'Panel de Administración';
         if (userRole === 'tutor') return 'Panel de Tutor';
         return `¡Hola ${userName}!`;
     };
@@ -160,52 +257,136 @@ const DashboardScreen = () => {
                     contentContainerStyle={{ marginBottom: 20 }}
                 />
 
-                {/* Botón Monitor ESP32 */}
-                <TouchableOpacity
-                    className={`rounded-2xl p-6 mb-6 shadow-lg ${isDark ? 'bg-blue-800' : 'bg-blue-600'}`}
-                    onPress={() => {
-                        console.log('🔍 Navegando directamente a ESP32MonitorBridge...');
-                        navigation.navigate('ESP32MonitorBridge');
-                    }}
-                    style={{
-                        shadowColor: '#000',
-                        shadowOffset: {
-                            width: 0,
-                            height: 4,
-                        },
-                        shadowOpacity: 0.3,
-                        shadowRadius: 6,
-                        elevation: 8,
-                    }}
-                >
-                    <View className="flex-row items-center justify-center">
-                        <View className="mr-4">
-                            <Text className="text-4xl">📟</Text>
-                        </View>
-                        <View className="flex-1">
-                            <Text className="text-white text-xl font-bold mb-1">
-                                Monitor ESP32
-                            </Text>
-                            <Text className="text-blue-100 text-sm mb-2">
-                                Ver eventos en tiempo real del dispositivo
-                            </Text>
-                            <View className="flex-row items-center">
-                                <View className={`w-3 h-3 rounded-full mr-2 ${status.connected ? 'bg-green-400' : 'bg-red-400'}`} />
-                                <Text className={`text-xs ${status.connected ? 'text-green-200' : 'text-red-200'}`}>
-                                    {status.connected ? 'ESP32 Conectado' : 'ESP32 Desconectado'}
+                {/* Botón Monitor ESP32 - Solo para tutores y administradores */}
+                {(user?.role_name === 'tutor' || user?.role_name === 'administrador') && (
+                    <TouchableOpacity
+                        className={`rounded-2xl p-6 mb-6 shadow-lg ${isDark ? 'bg-blue-800' : 'bg-blue-600'}`}
+                        onPress={() => {
+                            console.log('🔍 Navegando directamente a ESP32MonitorBridge...');
+                            navigation.navigate('ESP32MonitorBridge');
+                        }}
+                        style={{
+                            shadowColor: '#000',
+                            shadowOffset: {
+                                width: 0,
+                                height: 4,
+                            },
+                            shadowOpacity: 0.3,
+                            shadowRadius: 6,
+                            elevation: 8,
+                        }}
+                    >
+                        <View className="flex-row items-center justify-center">
+                            <View className="mr-4">
+                                <Text className="text-4xl">📟</Text>
+                            </View>
+                            <View className="flex-1">
+                                <Text className="text-white text-xl font-bold mb-1">
+                                    Monitor ESP32
                                 </Text>
-                                {status.battery !== undefined && (
-                                    <Text className="text-blue-200 text-xs ml-3">
-                                        🔋 {status.battery || 0}% | 📁 Cat. {status.category || 1}
+                                <Text className="text-blue-100 text-sm mb-2">
+                                    Ver eventos en tiempo real del dispositivo
+                                </Text>
+                                <View className="flex-row items-center">
+                                    <View className={`w-3 h-3 rounded-full mr-2 ${status.connected ? 'bg-green-400' : 'bg-red-400'}`} />
+                                    <Text className={`text-xs ${status.connected ? 'text-green-200' : 'text-red-200'}`}>
+                                        {status.connected ? 'ESP32 Conectado' : 'ESP32 Desconectado'}
                                     </Text>
-                                )}
+                                    {status.battery !== undefined && (
+                                        <Text className="text-blue-200 text-xs ml-3">
+                                            🔋 {status.battery || 0}% | 📁 Cat. {status.category || 1}
+                                        </Text>
+                                    )}
+                                </View>
+                            </View>
+                            <View className="ml-4">
+                                <Text className="text-white text-2xl">➤</Text>
                             </View>
                         </View>
-                        <View className="ml-4">
-                            <Text className="text-white text-2xl">➤</Text>
+                    </TouchableOpacity>
+                )}
+
+                {/* Botón Configuración - Solo para administradores */}
+                {user?.role_name === 'administrador' && (
+                    <TouchableOpacity
+                        className={`rounded-2xl p-6 mb-6 shadow-lg ${isDark ? 'bg-purple-800' : 'bg-purple-600'}`}
+                        onPress={() => {
+                            console.log('🔧 Navegando a Configuración...');
+                            navigation.navigate('Settings');
+                        }}
+                        style={{
+                            shadowColor: '#000',
+                            shadowOffset: {
+                                width: 0,
+                                height: 4,
+                            },
+                            shadowOpacity: 0.3,
+                            shadowRadius: 6,
+                            elevation: 8,
+                        }}
+                    >
+                        <View className="flex-row items-center justify-center">
+                            <View className="mr-4">
+                                <Text className="text-4xl">⚙️</Text>
+                            </View>
+                            <View className="flex-1">
+                                <Text className="text-white text-xl font-bold mb-1">
+                                    Configuración
+                                </Text>
+                                <Text className="text-purple-100 text-sm mb-2">
+                                    Gestionar configuraciones del sistema
+                                </Text>
+                                <Text className="text-purple-200 text-xs">
+                                    WhatsApp • Botones • Preferencias
+                                </Text>
+                            </View>
+                            <View className="ml-4">
+                                <Text className="text-white text-2xl">➤</Text>
+                            </View>
                         </View>
-                    </View>
-                </TouchableOpacity>
+                    </TouchableOpacity>
+                )}
+
+                {/* Botón acceso directo a Mis Mensajes para niños */}
+                {user?.role_name === 'niño' && (
+                    <TouchableOpacity
+                        className={`rounded-2xl p-6 mb-6 shadow-lg ${isDark ? 'bg-green-800' : 'bg-green-600'}`}
+                        onPress={() => {
+                            console.log('🔍 Navegando a Mis Mensajes...');
+                            navigation.navigate('MyMessages');
+                        }}
+                        style={{
+                            shadowColor: '#000',
+                            shadowOffset: {
+                                width: 0,
+                                height: 4,
+                            },
+                            shadowOpacity: 0.3,
+                            shadowRadius: 6,
+                            elevation: 8,
+                        }}
+                    >
+                        <View className="flex-row items-center justify-center">
+                            <View className="mr-4">
+                                <Text className="text-4xl">💬</Text>
+                            </View>
+                            <View className="flex-1">
+                                <Text className="text-white text-xl font-bold mb-1">
+                                    Mis Mensajes
+                                </Text>
+                                <Text className="text-green-100 text-sm mb-2">
+                                    Ver y reproducir tus mensajes asignados
+                                </Text>
+                                <Text className="text-green-200 text-xs">
+                                    {stats.totalMessages || 0} mensajes disponibles | {stats.favoriteMessages || 0} favoritos
+                                </Text>
+                            </View>
+                            <View className="ml-4">
+                                <Text className="text-white text-2xl">➤</Text>
+                            </View>
+                        </View>
+                    </TouchableOpacity>
+                )}
 
                 <View
                     className={`rounded-2xl p-6 shadow ${isDark ? 'bg-gray-800' : 'bg-gray-100'} mb-24`}

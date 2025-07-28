@@ -3,10 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 import { API_URL } from '@env';
 
-console.log('API_URL:', API_URL);
-const API_BASE_URL = __DEV__
-    ? `http://${API_URL}/api`
-    : 'https://tu-dominio-produccion.com/api';
+const API_BASE_URL = `http://${API_URL}/api`;
 
 class ApiClient {
     private instance: AxiosInstance;
@@ -23,13 +20,20 @@ class ApiClient {
         this.instance.interceptors.request.use(
             async (config) => {
                 try {
-                    const token = await AsyncStorage.getItem('auth_token');
+                    // Intentar con ambos nombres de clave para compatibilidad
+                    let token = await AsyncStorage.getItem('authToken');
+                    if (!token) {
+                        token = await AsyncStorage.getItem('auth_token');
+                    }
+                    console.log('🔑 Token retrieved from storage:', token ? token.substring(0, 50) + '...' : 'null');
                     if (token) {
                         config.headers.Authorization = `Bearer ${token}`;
                     }
                 } catch (error) {
                     console.warn('Error obteniendo token:', error);
                 }
+                console.log('📤 Request URL:', `${config.baseURL || ''}${config.url || ''}`);
+                console.log('📤 Request headers:', config.headers);
                 return config;
             },
             (error) => {
@@ -39,8 +43,24 @@ class ApiClient {
 
         // Interceptor para responses - manejar errores globalmente
         this.instance.interceptors.response.use(
-            (response: AxiosResponse) => response,
+            (response: AxiosResponse) => {
+                console.log('📥 Response received:', response.status, response.statusText);
+                console.log('📥 Response data:', response.data);
+
+                // Manejar respuesta 304 (Not Modified) - forzar refetch
+                if (response.status === 304) {
+                    console.log('⚠️ 304 Not Modified - Data might be cached, attempting fresh request');
+                    // Para 304, axios generalmente retorna la data cached, pero por si acaso verificamos
+                    if (!response.data) {
+                        console.log('⚠️ No data in 304 response, this might cause display issues');
+                    }
+                }
+
+                return response;
+            },
             async (error: AxiosError) => {
+                console.log('❌ Response error:', error.response?.status, error.response?.statusText);
+                console.log('❌ Response error data:', error.response?.data);
                 const { response } = error;
 
                 if (response?.status === 401) {
@@ -81,7 +101,7 @@ class ApiClient {
             });
             // Aquí puedes agregar navegación a login si es necesario
         } catch (error) {
-            console.error('Error limpiando almacenamiento:', error);
+
         }
     }
 

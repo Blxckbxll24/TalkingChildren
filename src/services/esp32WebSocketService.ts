@@ -64,7 +64,7 @@ class ESP32WebSocketService {
                     console.log('📥 WebSocket mensaje recibido:', msg);
                     this.notifyListeners(msg);
                 } catch (error) {
-                    console.error('❌ Error parsing WebSocket message:', error);
+                    
                 }
             };
 
@@ -73,25 +73,22 @@ class ESP32WebSocketService {
                 this.isConnecting = false;
                 this.notifyListeners({ type: 'esp32_disconnected', connected: false });
 
-                // Auto-reconexión solo si fue cierre inesperado
-                if (event.code !== 1000) {
-                    this.reconnectTimer = setTimeout(() => {
-                        console.log('🔄 Intentando reconectar...');
-                        this.connect(this.url);
-                    }, 5000);
-                }
+                // NO hacer auto-reconexión automática
+                // Solo conectar cuando el usuario lo solicite explícitamente
             };
 
             this.ws.onerror = (error) => {
-                console.error('❌ WebSocket error:', error);
+                
                 this.isConnecting = false;
-                this.notifyListeners({ type: 'error', message: 'Error de conexión WebSocket' });
+                // NO notificar errores de red a la UI
+                // Solo loggear para debugging
             };
 
         } catch (error) {
-            console.error('❌ Error creando WebSocket:', error);
+            
             this.isConnecting = false;
-            this.notifyListeners({ type: 'error', message: 'Error creando conexión WebSocket' });
+            // NO notificar errores de red a la UI
+            // Solo loggear para debugging
         }
     }
 
@@ -130,7 +127,7 @@ class ESP32WebSocketService {
             try {
                 cb(msg);
             } catch (error) {
-                console.error('❌ Error en listener WebSocket:', error);
+                
             }
         });
     }

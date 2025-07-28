@@ -12,7 +12,8 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTheme } from '../context/ThemeContext';
 import { useAuthStore } from '../stores/authStore';
-import type { RootStackParamList } from '../navigation/AppNavigator';
+import { RootStackParamList } from '../navigation/AdaptiveAppNavigator';
+import { Ionicons } from '@expo/vector-icons';
 
 const LoginScreen = () => {
   const { theme } = useTheme();
@@ -26,6 +27,7 @@ const LoginScreen = () => {
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   // Validaciones
   const validateEmail = (email: string) => {
@@ -107,14 +109,25 @@ const LoginScreen = () => {
           elevation: 8,
         }}>
         <View style={{ alignItems: 'center', marginBottom: 24 }}>
-          <Image
-            source={require('../../assets/icon.png')}
-            style={{ width: 64, height: 64, marginBottom: 8, borderRadius: 16 }}
-            resizeMode="contain"
-          />
+          <View style={{ 
+            width: 80, 
+            height: 80, 
+            borderRadius: 20, 
+            backgroundColor: '#3B82F6',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginBottom: 12,
+            shadowColor: '#3B82F6',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.3,
+            shadowRadius: 8,
+            elevation: 8,
+          }}>
+            <Text style={{ fontSize: 32, color: 'white', fontWeight: 'bold' }}>TC</Text>
+          </View>
           <Text
             className={`text-center text-3xl font-extrabold ${isDark ? 'text-white' : 'text-blue-900'}`}>
-            Bienvenido
+            Talking Children
           </Text>
           <Text
             className={`mt-2 text-center text-base ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
@@ -160,44 +173,51 @@ const LoginScreen = () => {
             className={`mb-1 text-base font-medium ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
             Contraseña
           </Text>
-          <TextInput
-            placeholder="Tu contraseña"
-            placeholderTextColor={isDark ? '#64748b' : '#94a3b8'}
-            value={password}
-            onChangeText={(text) => {
-              setPassword(text);
-              if (passwordError) setPasswordError('');
-            }}
-            secureTextEntry
-            editable={!isLoading}
-            style={{
-              borderWidth: 1.5,
-              borderColor: passwordError ? '#ef4444' : isDark ? '#334155' : '#cbd5e1',
-              backgroundColor: isDark ? '#334155' : '#f1f5f9',
-              color: isDark ? '#fff' : '#0f172a',
-              borderRadius: 12,
-              paddingHorizontal: 16,
-              paddingVertical: 12,
-              fontSize: 16,
-            }}
-            selectionColor={isDark ? '#38bdf8' : '#2563eb'}
-          />
+          <View style={{ position: 'relative' }}>
+            <TextInput
+              placeholder="Tu contraseña"
+              placeholderTextColor={isDark ? '#64748b' : '#94a3b8'}
+              value={password}
+              onChangeText={(text) => {
+                setPassword(text);
+                if (passwordError) setPasswordError('');
+              }}
+              secureTextEntry={!showPassword}
+              editable={!isLoading}
+              style={{
+                borderWidth: 1.5,
+                borderColor: passwordError ? '#ef4444' : isDark ? '#334155' : '#cbd5e1',
+                backgroundColor: isDark ? '#334155' : '#f1f5f9',
+                color: isDark ? '#fff' : '#0f172a',
+                borderRadius: 12,
+                paddingHorizontal: 16,
+                paddingVertical: 12,
+                paddingRight: 50, // Espacio para el icono
+                fontSize: 16,
+              }}
+              selectionColor={isDark ? '#38bdf8' : '#2563eb'}
+            />
+            <TouchableOpacity
+              onPress={() => setShowPassword(!showPassword)}
+              style={{
+                position: 'absolute',
+                right: 12,
+                top: 12,
+                padding: 4,
+              }}
+              disabled={isLoading}
+            >
+              <Ionicons
+                name={showPassword ? 'eye-off' : 'eye'}
+                size={20}
+                color={isDark ? '#9ca3af' : '#6b7280'}
+              />
+            </TouchableOpacity>
+          </View>
           {passwordError ? (
             <Text className="mt-1 text-xs text-red-500">{passwordError}</Text>
           ) : null}
         </View>
-
-        {/* Forgot password */}
-        <TouchableOpacity
-          onPress={() => {
-            /* Aquí puedes navegar a la pantalla de recuperación */
-          }}
-          disabled={isLoading}
-          style={{ alignSelf: 'flex-end', marginBottom: 18 }}>
-          <Text className={`text-xs font-semibold ${isDark ? 'text-blue-300' : 'text-blue-700'}`}>
-            ¿Olvidaste tu contraseña?
-          </Text>
-        </TouchableOpacity>
 
         {/* Error global */}
         {error ? (

@@ -39,12 +39,24 @@ const adminNavItems: NavItem[] = [
     name: 'ESP32',
     icon: <MaterialIcons name="memory" size={24} />,
     to: 'ESP32Control',
-    roles: ['administrador'],
+    roles: ['administrador', 'tutor', 'niño'],
   },
   {
     name: 'Usuarios',
     icon: <MaterialIcons name="people" size={24} />,
     to: 'Users',
+    roles: ['administrador'],
+  },
+  {
+    name: 'Niños',
+    icon: <MaterialIcons name="child-care" size={24} />,
+    to: 'ChildrenManagement',
+    roles: ['administrador'],
+  },
+  {
+    name: 'WhatsApp',
+    icon: <MaterialIcons name="chat" size={24} />,
+    to: 'WhatsAppConfig',
     roles: ['administrador'],
   },
   {
@@ -78,13 +90,13 @@ const tutorNavItems: NavItem[] = [
   {
     name: 'Mensajes',
     icon: <MaterialIcons name="message" size={24} />,
-    to: 'Messages',
+    to: 'TutorMessageManagement',
     roles: ['tutor'],
   },
   {
-    name: 'Niños',
-    icon: <MaterialIcons name="child-care" size={24} />,
-    to: 'ChildrenManagement',
+    name: 'ESP32',
+    icon: <MaterialIcons name="memory" size={24} />,
+    to: 'ESP32Control',
     roles: ['tutor'],
   },
   { name: 'Perfil', icon: <Feather name="user" size={24} />, to: 'Profile', roles: ['tutor'] },
@@ -92,16 +104,15 @@ const tutorNavItems: NavItem[] = [
 
 // Navegación para niños
 const childNavItems: NavItem[] = [
-  { name: 'Inicio', icon: <MaterialIcons name="home" size={24} />, to: 'Home', roles: ['niño'] },
-  {
-    name: 'TTS',
-    icon: <MaterialIcons name="play-circle-filled" size={24} />,
-    to: 'TTSDashboard',
-    roles: ['niño'],
+  { 
+    name: 'Dashboard', 
+    icon: <MaterialIcons name="dashboard" size={24} />, 
+    to: 'Dashboard', 
+    roles: ['niño'] 
   },
   {
-    name: 'Favoritos',
-    icon: <MaterialIcons name="favorite" size={24} />,
+    name: 'Mis Mensajes',
+    icon: <MaterialIcons name="message" size={24} />,
     to: 'MyMessages',
     roles: ['niño'],
   },
@@ -132,9 +143,9 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({ theme }) => {
 
       // Mapeo de pantallas por rol
       const screensByRole: Record<string, (keyof RootStackParamList)[]> = {
-        administrador: ['Dashboard', 'TTSDashboard', 'Messages', 'ESP32Control', 'Users', 'Settings', 'Profile'],
-        tutor: ['Dashboard', 'TTSDashboard', 'Messages', 'ChildrenManagement', 'Profile'],
-        niño: ['Home', 'TTSDashboard', 'MyMessages', 'Profile'],
+        administrador: ['Dashboard', 'TTSDashboard', 'Messages', 'ESP32Control', 'Users', 'ChildrenManagement', 'Settings', 'Profile', 'WhatsAppConfig', 'Button'],
+        tutor: ['Dashboard', 'TTSDashboard', 'TutorMessageManagement', 'ESP32Control', 'Profile'],
+        niño: ['Dashboard', 'MyMessages', 'Profile'],
         guest: ['Home', 'Profile'],
       };
 
@@ -191,7 +202,7 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({ theme }) => {
 
       // Si no hay usuario, no permitir navegación a pantallas protegidas
       if (!user) {
-        console.error('❌ No hay usuario autenticado');
+        
         Toast.show({
           type: 'error',
           text1: 'Error de Autenticación',
@@ -202,8 +213,7 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({ theme }) => {
 
       // Primera verificación: usar la función de disponibilidad de pantalla
       if (!isScreenAvailable(screenName)) {
-        console.error('❌ Pantalla no disponible según mapeo de roles:', String(screenName));
-        console.error('👤 Rol actual:', user?.role_name?.toLowerCase());
+        // Error silenciado para el usuario
         Toast.show({
           type: 'error',
           text1: 'Acceso Denegado',
@@ -217,11 +227,7 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({ theme }) => {
       const targetItem = currentNavItems.find((item) => item.to === screenName);
 
       if (!targetItem) {
-        console.error('❌ Pantalla no encontrada en elementos de navegación:', String(screenName));
-        console.error(
-          '📋 Pantallas disponibles:',
-          currentNavItems.map((item) => item.to)
-        );
+        // Error silenciado para el usuario
         Toast.show({
           type: 'error',
           text1: 'Error de Navegación',
@@ -238,7 +244,7 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({ theme }) => {
           navigation.navigate(screenName as any);
           console.log('✅ Navegación exitosa a:', String(screenName));
         } catch (error) {
-          console.error('❌ Error de navegación:', error);
+          
           Toast.show({
             type: 'error',
             text1: 'Error de Navegación',
