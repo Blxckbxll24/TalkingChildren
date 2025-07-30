@@ -276,7 +276,7 @@ export default function WhatsAppConfigScreen() {
         </View>
 
         {/* Configuración del número */}
-        <View className={`p-4 rounded-xl mb-6 ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
+        {/* <View className={`p-4 rounded-xl mb-6 ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
           <Text className={`text-lg font-semibold mb-3 ${isDark ? 'text-white' : 'text-black'}`}>
             Número de WhatsApp
           </Text>
@@ -327,7 +327,7 @@ export default function WhatsAppConfigScreen() {
               </Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </View> */}
 
         {/* Pruebas */}
         <View className={`p-4 rounded-xl mb-6 ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
@@ -355,7 +355,7 @@ export default function WhatsAppConfigScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Información */}
+        {/* Información
         <View className={`p-4 rounded-xl mb-32 ${isDark ? 'bg-blue-900/20' : 'bg-blue-50'}`}>
           <Text className={`text-base font-semibold mb-2 ${isDark ? 'text-blue-300' : 'text-blue-800'}`}>
             ℹ️ Información Importante
@@ -367,7 +367,7 @@ export default function WhatsAppConfigScreen() {
             • El número se enviará exactamente como lo escribas (conservando el formato + si lo incluyes){'\n'}
             • Formatos válidos: +529983901955, 529983901955, 9983901955
           </Text>
-        </View>
+        </View> */}
       </ScrollView>
 
       <BottomNavBar theme={theme} />

@@ -6,9 +6,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Sun, Moon, LogOut, User, Edit } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { RootStackParamList } from '../navigation/AppNavigator';
 import { useAuthStore } from '../stores/authStore';
 import { authService } from '../services/authService';
+import { RootStackParamList } from '../navigation/AdaptiveAppNavigator';
 
 const ProfileScreen = () => {
   const { theme, toggleTheme } = useTheme();
@@ -127,7 +127,7 @@ const ProfileScreen = () => {
             />
           </View>
 
-          {user?.role_name === 'child' && (
+          {/* {user?.role_name === 'child' && (
             <>
               <Text className={`text-xl font-bold mt-8 mb-4 ${isDark ? 'text-white' : 'text-black'}`}>
                 Información del Perfil
@@ -138,9 +138,9 @@ const ProfileScreen = () => {
                 <LabelValue label="Categorías Accesibles" value="5" />
               </View>
             </>
-          )}
+          )} */}
 
-          {user?.role_name === 'tutor' && (
+          {/* {user?.role_name === 'tutor' && (
             <>
               <Text className={`text-xl font-bold mt-8 mb-4 ${isDark ? 'text-white' : 'text-black'}`}>
                 Panel de Tutor
@@ -149,9 +149,9 @@ const ProfileScreen = () => {
                 <LabelValue label="Estado" value="Activo" />
               </View>
             </>
-          )}
+          )} */}
 
-          {user?.role_name === 'administrador' && (
+          {/* {user?.role_name === 'administrador' && (
             <>
               <Text className={`text-xl font-bold mt-8 mb-4 ${isDark ? 'text-white' : 'text-black'}`}>
                 Panel de Administración
@@ -162,7 +162,7 @@ const ProfileScreen = () => {
                 <LabelValue label="Estado del Sistema" value="Operativo" />
               </View>
             </>
-          )}
+          )} */}
         </View>
         
         <TouchableOpacity

@@ -23,18 +23,18 @@ const adminNavItems: NavItem[] = [
     to: 'Dashboard',
     roles: ['administrador'],
   },
-  {
-    name: 'Dashboard',
-    icon: <MaterialIcons name="play-circle-filled" size={24} />,
-    to: 'TTSDashboard',
-    roles: ['administrador'],
-  },
-  {
-    name: 'Mensajes',
-    icon: <MaterialIcons name="message" size={24} />,
-    to: 'Messages',
-    roles: ['administrador'],
-  },
+  // {
+  //   name: 'Dashboard',
+  //   icon: <MaterialIcons name="play-circle-filled" size={24} />,
+  //   to: 'TTSDashboard',
+  //   roles: ['administrador'],
+  // },
+  // {
+  //   name: 'Mensajes',
+  //   icon: <MaterialIcons name="message" size={24} />,
+  //   to: 'Messages',
+  //   roles: ['administrador'],
+  // },
   {
     name: 'ESP32',
     icon: <MaterialIcons name="memory" size={24} />,
@@ -47,12 +47,12 @@ const adminNavItems: NavItem[] = [
     to: 'Users',
     roles: ['administrador'],
   },
-  {
-    name: 'Niños',
-    icon: <MaterialIcons name="child-care" size={24} />,
-    to: 'ChildrenManagement',
-    roles: ['administrador'],
-  },
+  // {
+  //   name: 'Niños',
+  //   icon: <MaterialIcons name="child-care" size={24} />,
+  //   to: 'ChildrenManagement',
+  //   roles: ['administrador'],
+  // },
   {
     name: 'WhatsApp',
     icon: <MaterialIcons name="chat" size={24} />,
@@ -65,12 +65,12 @@ const adminNavItems: NavItem[] = [
     to: 'Settings',
     roles: ['administrador'],
   },
-  {
-    name: 'Perfil',
-    icon: <Feather name="user" size={24} />,
-    to: 'Profile',
-    roles: ['administrador'],
-  },
+  // {
+  //   name: 'Perfil',
+  //   icon: <Feather name="user" size={24} />,
+  //   to: 'Profile',
+  //   roles: ['administrador'],
+  // },
 ];
 
 // Navegación para tutores
@@ -81,25 +81,31 @@ const tutorNavItems: NavItem[] = [
     to: 'Dashboard',
     roles: ['tutor'],
   },
-  {
-    name: 'TTS',
-    icon: <MaterialIcons name="play-circle-filled" size={24} />,
-    to: 'TTSDashboard',
-    roles: ['tutor'],
-  },
-  {
-    name: 'Mensajes',
-    icon: <MaterialIcons name="message" size={24} />,
-    to: 'TutorMessageManagement',
-    roles: ['tutor'],
-  },
+  // {
+  //   name: 'TTS',
+  //   icon: <MaterialIcons name="play-circle-filled" size={24} />,
+  //   to: 'TTSDashboard',
+  //   roles: ['tutor'],
+  // },
+  // {
+  //   name: 'Mensajes',
+  //   icon: <MaterialIcons name="message" size={24} />,
+  //   to: 'TutorMessageManagement',
+  //   roles: ['tutor'],
+  // },
   {
     name: 'ESP32',
     icon: <MaterialIcons name="memory" size={24} />,
     to: 'ESP32Control',
     roles: ['tutor'],
   },
-  { name: 'Perfil', icon: <Feather name="user" size={24} />, to: 'Profile', roles: ['tutor'] },
+    { name: 'Perfil', icon: <Feather name="user" size={24} />, to: 'Profile', roles: ['tutor'] },
+  {
+    name: 'Config',
+    icon: <Feather name="settings" size={24} />,
+    to: 'Settings',
+    roles: ['tutor'],
+  },
 ];
 
 // Navegación para niños
@@ -144,7 +150,7 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({ theme }) => {
       // Mapeo de pantallas por rol
       const screensByRole: Record<string, (keyof RootStackParamList)[]> = {
         administrador: ['Dashboard', 'TTSDashboard', 'Messages', 'ESP32Control', 'Users', 'ChildrenManagement', 'Settings', 'Profile', 'WhatsAppConfig', 'Button'],
-        tutor: ['Dashboard', 'TTSDashboard', 'TutorMessageManagement', 'ESP32Control', 'Profile'],
+        tutor: ['Dashboard', 'TTSDashboard', 'TutorMessageManagement', 'ESP32Control', 'Settings', 'Profile'],
         niño: ['Dashboard', 'MyMessages', 'Profile'],
         guest: ['Home', 'Profile'],
       };

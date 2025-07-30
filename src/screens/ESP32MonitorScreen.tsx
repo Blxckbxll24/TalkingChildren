@@ -133,9 +133,9 @@ export default function ESP32MonitorScreen() {
     // Aquí puedes agregar lógica para escuchar eventos reales del ESP32
     // Por ahora solo actualizamos la última actividad basada en el estado
     if (isConnected) {
-      setLastActivity('ESP32 Conectado');
+      setLastActivity('Control Conectado');
     } else {
-      setLastActivity('ESP32 Desconectado');
+      setLastActivity('Control Desconectado');
     }
   }, [isConnected]);
 
@@ -192,10 +192,10 @@ export default function ESP32MonitorScreen() {
         {/* Header */}
         <View style={styles.header}>
           <Text style={[styles.title, { color: colors.text }]}>
-            Monitor ESP32 TalkingChildren
+            Monitor del Control
           </Text>
           <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-            Eventos en tiempo real
+            Acciones en tiempo real
           </Text>
         </View>
 
@@ -211,7 +211,7 @@ export default function ESP32MonitorScreen() {
           {esp32Status && (
             <>
               <Text style={[styles.deviceInfo, { color: colors.textSecondary }]}>
-                🔋 Batería: {esp32Status.battery || 0}% | 📁 Categoría: {esp32Status.category || 1}
+                📁 Categoría: {esp32Status.category || 1}
               </Text>
               <Text style={[styles.deviceInfo, { color: colors.textSecondary }]}>
                 📶 Estado: {isConnected ? 'Conectado' : 'Desconectado'} | ⏱️ Monitor en tiempo real
@@ -345,17 +345,15 @@ export default function ESP32MonitorScreen() {
             📋 Instrucciones
           </Text>
           <Text style={[styles.instructionText, { color: colors.textSecondary }]}>
-            • Presiona los botones físicos del ESP32 para ver los eventos aquí
+            • Presiona los botones del control para ver las acciones aquí
           </Text>
           <Text style={[styles.instructionText, { color: colors.textSecondary }]}>
-            • Los eventos se muestran en tiempo real cuando el ESP32 está conectado
+            • Los eventos se muestran en tiempo real cuando el control está conectado
           </Text>
           <Text style={[styles.instructionText, { color: colors.textSecondary }]}>
-            • Cambia categorías con triple-click en el botón 3 del ESP32
+            • Cambia categorías con triple-click en el botón 3 del control
           </Text>
-          <Text style={[styles.instructionText, { color: colors.textSecondary }]}>
-            • El heartbeat se envía cada ~60 segundos automáticamente
-          </Text>
+         
         </View>
         </View>
       </ScrollView>

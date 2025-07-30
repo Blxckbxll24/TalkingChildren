@@ -38,7 +38,7 @@ interface UserFormData {
 const ROLES = [
   { id: 1, name: 'Administrador' },
   { id: 2, name: 'Tutor' },
-  { id: 3, name: 'Niño' },
+  // { id: 3, name: 'Niño' },
 ];
 
 class UserService {
@@ -499,10 +499,10 @@ const UsersScreen = () => {
             </View>
 
             {/* Buttons */}
-            <View className="mt-6 flex-row space-x-4">
+            <View className="mt-8 py-2 space-y-3">
               <TouchableOpacity
                 onPress={() => setModalVisible(false)}
-                className={`flex-1 rounded-lg border py-3 ${
+                className={`flex-1 rounded-lg border py-3 px-4 ${
                   isDark ? 'border-gray-600 bg-gray-800' : 'border-gray-300 bg-white'
                 }`}>
                 <Text
@@ -513,7 +513,7 @@ const UsersScreen = () => {
               <TouchableOpacity
                 onPress={handleCreateUser}
                 disabled={loading}
-                className={`flex-1 rounded-lg py-3 ${loading ? 'bg-gray-400' : 'bg-blue-500'}`}>
+                className={`flex-1 rounded-lg py-3 px-4 mt-3 ${loading ? 'bg-gray-400' : 'bg-blue-500'}`}>
                 {loading ? (
                   <ActivityIndicator size="small" color="white" />
                 ) : (

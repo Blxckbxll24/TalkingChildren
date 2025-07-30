@@ -28,124 +28,124 @@ export default function ESP32AdminControlScreen() {
   // Configuración completa de los 100 mensajes
   const allMessages = [
     // Categoría 1 - Básico (001-010)
-    { id: 1, file: "001.wav", title: "Hola buenos dias", category: 1 },
-    { id: 2, file: "002.wav", title: "Necesito ayuda", category: 1 },
-    { id: 3, file: "003.wav", title: "Muchas gracias", category: 1 },
-    { id: 4, file: "004.wav", title: "Por favor", category: 1 },
-    { id: 5, file: "005.wav", title: "Disculpa", category: 1 },
-    { id: 6, file: "006.wav", title: "Si estoy de acuerdo", category: 1 },
-    { id: 7, file: "007.wav", title: "No, no quiero", category: 1 },
-    { id: 8, file: "008.wav", title: "Esta bien", category: 1 },
-    { id: 9, file: "009.wav", title: "No entiendo", category: 1 },
-    { id: 10, file: "010.wav", title: "Hasta luego", category: 1 },
+    { id: 1, file: "001.mp3", title: "Hola buenos dias", category: 1 },
+    { id: 2, file: "002.mp3", title: "Necesito ayuda", category: 1 },
+    { id: 3, file: "003.mp3", title: "Muchas gracias", category: 1 },
+    { id: 4, file: "004.mp3", title: "Por favor", category: 1 },
+    { id: 5, file: "005.mp3", title: "Disculpa", category: 1 },
+    { id: 6, file: "006.mp3", title: "Si estoy de acuerdo", category: 1 },
+    { id: 7, file: "007.mp3", title: "No, no quiero", category: 1 },
+    { id: 8, file: "008.mp3", title: "Esta bien", category: 1 },
+    { id: 9, file: "009.mp3", title: "No entiendo", category: 1 },
+    { id: 10, file: "010.mp3", title: "Hasta luego", category: 1 },
     
     // Categoría 2 - Emociones (011-020)
-    { id: 11, file: "011.wav", title: "Me siento feliz", category: 2 },
-    { id: 12, file: "012.wav", title: "Estoy triste", category: 2 },
-    { id: 13, file: "013.wav", title: "Tengo miedo", category: 2 },
-    { id: 14, file: "014.wav", title: "Me siento enojado", category: 2 },
-    { id: 15, file: "015.wav", title: "Estoy emocionado", category: 2 },
-    { id: 16, file: "016.wav", title: "Me siento cansado", category: 2 },
-    { id: 17, file: "017.wav", title: "Estoy nervioso", category: 2 },
-    { id: 18, file: "018.wav", title: "Me siento solo", category: 2 },
-    { id: 19, file: "019.wav", title: "Estoy orgulloso", category: 2 },
-    { id: 20, file: "020.wav", title: "Me siento bien", category: 2 },
+    { id: 11, file: "011.mp3", title: "Me siento feliz", category: 2 },
+    { id: 12, file: "012.mp3", title: "Estoy triste", category: 2 },
+    { id: 13, file: "013.mp3", title: "Tengo miedo", category: 2 },
+    { id: 14, file: "014.mp3", title: "Me siento enojado", category: 2 },
+    { id: 15, file: "015.mp3", title: "Estoy emocionado", category: 2 },
+    { id: 16, file: "016.mp3", title: "Me siento cansado", category: 2 },
+    { id: 17, file: "017.mp3", title: "Estoy nervioso", category: 2 },
+    { id: 18, file: "018.mp3", title: "Me siento solo", category: 2 },
+    { id: 19, file: "019.mp3", title: "Estoy orgulloso", category: 2 },
+    { id: 20, file: "020.mp3", title: "Me siento bien", category: 2 },
     
     // Categoría 3 - Necesidades (021-030)
-    { id: 21, file: "021.wav", title: "Necesito ir al baño", category: 3 },
-    { id: 22, file: "022.wav", title: "Tengo hambre", category: 3 },
-    { id: 23, file: "023.wav", title: "Tengo sed", category: 3 },
-    { id: 24, file: "024.wav", title: "Tengo sueño", category: 3 },
-    { id: 25, file: "025.wav", title: "Tengo frio", category: 3 },
-    { id: 26, file: "026.wav", title: "Tengo calor", category: 3 },
-    { id: 27, file: "027.wav", title: "Me duele algo", category: 3 },
-    { id: 28, file: "028.wav", title: "Quiero descansar", category: 3 },
-    { id: 29, file: "029.wav", title: "Necesito medicina", category: 3 },
-    { id: 30, file: "030.wav", title: "Quiero agua", category: 3 },
+    { id: 21, file: "021.mp3", title: "Necesito ir al baño", category: 3 },
+    { id: 22, file: "022.mp3", title: "Tengo hambre", category: 3 },
+    { id: 23, file: "023.mp3", title: "Tengo sed", category: 3 },
+    { id: 24, file: "024.mp3", title: "Tengo sueño", category: 3 },
+    { id: 25, file: "025.mp3", title: "Tengo frio", category: 3 },
+    { id: 26, file: "026.mp3", title: "Tengo calor", category: 3 },
+    { id: 27, file: "027.mp3", title: "Me duele algo", category: 3 },
+    { id: 28, file: "028.mp3", title: "Quiero descansar", category: 3 },
+    { id: 29, file: "029.mp3", title: "Necesito medicina", category: 3 },
+    { id: 30, file: "030.mp3", title: "Quiero agua", category: 3 },
     
     // Categoría 4 - Saludos (031-040)
-    { id: 31, file: "031.wav", title: "Hola mama", category: 4 },
-    { id: 32, file: "032.wav", title: "Hola papa", category: 4 },
-    { id: 33, file: "033.wav", title: "Buenos dias", category: 4 },
-    { id: 34, file: "034.wav", title: "Buenas tardes", category: 4 },
-    { id: 35, file: "035.wav", title: "Buenas noches", category: 4 },
-    { id: 36, file: "036.wav", title: "Hasta mañana", category: 4 },
-    { id: 37, file: "037.wav", title: "Nos vemos luego", category: 4 },
-    { id: 38, file: "038.wav", title: "Adios", category: 4 },
-    { id: 39, file: "039.wav", title: "Buen dia", category: 4 },
-    { id: 40, file: "040.wav", title: "Que descanses", category: 4 },
+    { id: 31, file: "031.mp3", title: "Hola mama", category: 4 },
+    { id: 32, file: "032.mp3", title: "Hola papa", category: 4 },
+    { id: 33, file: "033.mp3", title: "Buenos dias", category: 4 },
+    { id: 34, file: "034.mp3", title: "Buenas tardes", category: 4 },
+    { id: 35, file: "035.mp3", title: "Buenas noches", category: 4 },
+    { id: 36, file: "036.mp3", title: "Hasta mañana", category: 4 },
+    { id: 37, file: "037.mp3", title: "Nos vemos luego", category: 4 },
+    { id: 38, file: "038.mp3", title: "Adios", category: 4 },
+    { id: 39, file: "039.mp3", title: "Buen dia", category: 4 },
+    { id: 40, file: "040.mp3", title: "Que descanses", category: 4 },
     
     // Categoría 5 - Familia (041-050)
-    { id: 41, file: "041.wav", title: "Quiero ver a mama", category: 5 },
-    { id: 42, file: "042.wav", title: "Extraño a papa", category: 5 },
-    { id: 43, file: "043.wav", title: "Amo a mi familia", category: 5 },
-    { id: 44, file: "044.wav", title: "Quiero ir a casa", category: 5 },
-    { id: 45, file: "045.wav", title: "Mi hermano es genial", category: 5 },
-    { id: 46, file: "046.wav", title: "Abuela te amo", category: 5 },
-    { id: 47, file: "047.wav", title: "Abuelo me cuida", category: 5 },
-    { id: 48, file: "048.wav", title: "Mi familia me quiere", category: 5 },
-    { id: 49, file: "049.wav", title: "Estoy en casa", category: 5 },
-    { id: 50, file: "050.wav", title: "Quiero un abrazo", category: 5 },
+    { id: 41, file: "041.mp3", title: "Quiero ver a mama", category: 5 },
+    { id: 42, file: "042.mp3", title: "Extraño a papa", category: 5 },
+    { id: 43, file: "043.mp3", title: "Amo a mi familia", category: 5 },
+    { id: 44, file: "044.mp3", title: "Quiero ir a casa", category: 5 },
+    { id: 45, file: "045.mp3", title: "Mi hermano es genial", category: 5 },
+    { id: 46, file: "046.mp3", title: "Abuela te amo", category: 5 },
+    { id: 47, file: "047.mp3", title: "Abuelo me cuida", category: 5 },
+    { id: 48, file: "048.mp3", title: "Mi familia me quiere", category: 5 },
+    { id: 49, file: "049.mp3", title: "Estoy en casa", category: 5 },
+    { id: 50, file: "050.mp3", title: "Quiero un abrazo", category: 5 },
     
     // Categoría 6 - Comida (051-060)
-    { id: 51, file: "051.wav", title: "Quiero comer", category: 6 },
-    { id: 52, file: "052.wav", title: "Esta delicioso", category: 6 },
-    { id: 53, file: "053.wav", title: "No me gusta", category: 6 },
-    { id: 54, file: "054.wav", title: "Quiero mas", category: 6 },
-    { id: 55, file: "055.wav", title: "Ya termine", category: 6 },
-    { id: 56, file: "056.wav", title: "Quiero fruta", category: 6 },
-    { id: 57, file: "057.wav", title: "Me gusta el pan", category: 6 },
-    { id: 58, file: "058.wav", title: "Quiero leche", category: 6 },
-    { id: 59, file: "059.wav", title: "Esta muy rico", category: 6 },
-    { id: 60, file: "060.wav", title: "Quiero postre", category: 6 },
+    { id: 51, file: "051.mp3", title: "Quiero comer", category: 6 },
+    { id: 52, file: "052.mp3", title: "Esta delicioso", category: 6 },
+    { id: 53, file: "053.mp3", title: "No me gusta", category: 6 },
+    { id: 54, file: "054.mp3", title: "Quiero mas", category: 6 },
+    { id: 55, file: "055.mp3", title: "Ya termine", category: 6 },
+    { id: 56, file: "056.mp3", title: "Quiero fruta", category: 6 },
+    { id: 57, file: "057.mp3", title: "Me gusta el pan", category: 6 },
+    { id: 58, file: "058.mp3", title: "Quiero leche", category: 6 },
+    { id: 59, file: "059.mp3", title: "Esta muy rico", category: 6 },
+    { id: 60, file: "060.mp3", title: "Quiero postre", category: 6 },
     
     // Categoría 7 - Juegos (061-070)
-    { id: 61, file: "061.wav", title: "Quiero jugar", category: 7 },
-    { id: 62, file: "062.wav", title: "Es mi turno", category: 7 },
-    { id: 63, file: "063.wav", title: "Jugamos juntos", category: 7 },
-    { id: 64, file: "064.wav", title: "Me gusta este juego", category: 7 },
-    { id: 65, file: "065.wav", title: "Gane el juego", category: 7 },
-    { id: 66, file: "066.wav", title: "Es divertido", category: 7 },
-    { id: 67, file: "067.wav", title: "Quiero la pelota", category: 7 },
-    { id: 68, file: "068.wav", title: "Vamos al parque", category: 7 },
-    { id: 69, file: "069.wav", title: "Me gusta correr", category: 7 },
-    { id: 70, file: "070.wav", title: "Hora de jugar", category: 7 },
+    { id: 61, file: "061.mp3", title: "Quiero jugar", category: 7 },
+    { id: 62, file: "062.mp3", title: "Es mi turno", category: 7 },
+    { id: 63, file: "063.mp3", title: "Jugamos juntos", category: 7 },
+    { id: 64, file: "064.mp3", title: "Me gusta este juego", category: 7 },
+    { id: 65, file: "065.mp3", title: "Gane el juego", category: 7 },
+    { id: 66, file: "066.mp3", title: "Es divertido", category: 7 },
+    { id: 67, file: "067.mp3", title: "Quiero la pelota", category: 7 },
+    { id: 68, file: "068.mp3", title: "Vamos al parque", category: 7 },
+    { id: 69, file: "069.mp3", title: "Me gusta correr", category: 7 },
+    { id: 70, file: "070.mp3", title: "Hora de jugar", category: 7 },
     
     // Categoría 8 - Escuela (071-080)
-    { id: 71, file: "071.wav", title: "Voy a la escuela", category: 8 },
-    { id: 72, file: "072.wav", title: "Me gusta aprender", category: 8 },
-    { id: 73, file: "073.wav", title: "Tengo tarea", category: 8 },
-    { id: 74, file: "074.wav", title: "Mi maestra es buena", category: 8 },
-    { id: 75, file: "075.wav", title: "Necesito ayuda", category: 8 },
-    { id: 76, file: "076.wav", title: "Ya entendi", category: 8 },
-    { id: 77, file: "077.wav", title: "Quiero leer", category: 8 },
-    { id: 78, file: "078.wav", title: "Me gusta dibujar", category: 8 },
-    { id: 79, file: "079.wav", title: "Hora del recreo", category: 8 },
-    { id: 80, file: "080.wav", title: "Termine mi trabajo", category: 8 },
+    { id: 71, file: "071.mp3", title: "Voy a la escuela", category: 8 },
+    { id: 72, file: "072.mp3", title: "Me gusta aprender", category: 8 },
+    { id: 73, file: "073.mp3", title: "Tengo tarea", category: 8 },
+    { id: 74, file: "074.mp3", title: "Mi maestra es buena", category: 8 },
+    { id: 75, file: "075.mp3", title: "Necesito ayuda", category: 8 },
+    { id: 76, file: "076.mp3", title: "Ya entendi", category: 8 },
+    { id: 77, file: "077.mp3", title: "Quiero leer", category: 8 },
+    { id: 78, file: "078.mp3", title: "Me gusta dibujar", category: 8 },
+    { id: 79, file: "079.mp3", title: "Hora del recreo", category: 8 },
+    { id: 80, file: "080.mp3", title: "Termine mi trabajo", category: 8 },
     
     // Categoría 9 - Salud (081-090)
-    { id: 81, file: "081.wav", title: "Me siento bien", category: 9 },
-    { id: 82, file: "082.wav", title: "Me duele la cabeza", category: 9 },
-    { id: 83, file: "083.wav", title: "Necesito medicina", category: 9 },
-    { id: 84, file: "084.wav", title: "Quiero ver al doctor", category: 9 },
-    { id: 85, file: "085.wav", title: "Me duele el estomago", category: 9 },
-    { id: 86, file: "086.wav", title: "Estoy enfermo", category: 9 },
-    { id: 87, file: "087.wav", title: "Me siento mejor", category: 9 },
-    { id: 88, file: "088.wav", title: "Necesito descansar", category: 9 },
-    { id: 89, file: "089.wav", title: "Tomare mi medicina", category: 9 },
-    { id: 90, file: "090.wav", title: "Ya me cure", category: 9 },
+    { id: 81, file: "081.mp3", title: "Me siento bien", category: 9 },
+    { id: 82, file: "082.mp3", title: "Me duele la cabeza", category: 9 },
+    { id: 83, file: "083.mp3", title: "Necesito medicina", category: 9 },
+    { id: 84, file: "084.mp3", title: "Quiero ver al doctor", category: 9 },
+    { id: 85, file: "085.mp3", title: "Me duele el estomago", category: 9 },
+    { id: 86, file: "086.mp3", title: "Estoy enfermo", category: 9 },
+    { id: 87, file: "087.mp3", title: "Me siento mejor", category: 9 },
+    { id: 88, file: "088.mp3", title: "Necesito descansar", category: 9 },
+    { id: 89, file: "089.mp3", title: "Tomare mi medicina", category: 9 },
+    { id: 90, file: "090.mp3", title: "Ya me cure", category: 9 },
     
     // Categoría 10 - Transporte (091-100)
-    { id: 91, file: "091.wav", title: "Quiero ir en carro", category: 10 },
-    { id: 92, file: "092.wav", title: "Vamos en autobus", category: 10 },
-    { id: 93, file: "093.wav", title: "Me gusta caminar", category: 10 },
-    { id: 94, file: "094.wav", title: "Vamos rapido", category: 10 },
-    { id: 95, file: "095.wav", title: "Llegamos ya", category: 10 },
-    { id: 96, file: "096.wav", title: "Quiero ir lejos", category: 10 },
-    { id: 97, file: "097.wav", title: "Cerca de casa", category: 10 },
-    { id: 98, file: "098.wav", title: "Vamos despacio", category: 10 },
-    { id: 99, file: "099.wav", title: "Subir al carro", category: 10 },
-    { id: 100, file: "100.wav", title: "Bajar aqui", category: 10 }
+    { id: 91, file: "091.mp3", title: "Quiero ir en carro", category: 10 },
+    { id: 92, file: "092.mp3", title: "Vamos en autobus", category: 10 },
+    { id: 93, file: "093.mp3", title: "Me gusta caminar", category: 10 },
+    { id: 94, file: "094.mp3", title: "Vamos rapido", category: 10 },
+    { id: 95, file: "095.mp3", title: "Llegamos ya", category: 10 },
+    { id: 96, file: "096.mp3", title: "Quiero ir lejos", category: 10 },
+    { id: 97, file: "097.mp3", title: "Cerca de casa", category: 10 },
+    { id: 98, file: "098.mp3", title: "Vamos despacio", category: 10 },
+    { id: 99, file: "099.mp3", title: "Subir al carro", category: 10 },
+    { id: 100, file: "100.mp3", title: "Bajar aqui", category: 10 }
   ];
   
   // Función para obtener información específica por rol
@@ -156,12 +156,10 @@ export default function ESP32AdminControlScreen() {
       case 'administrador':
         return {
           title: "Panel de Control Completo",
-          description: "Acceso total para configurar y monitorear el dispositivo ESP32. Puedes cambiar categorías, controlar el sistema y ver estadísticas detalladas.",
+          description: "Acceso total para configurar y monitorear el dispositivo. Puedes cambiar categorías, controlar el sistema y ver estadísticas detalladas.",
           features: [
-            "• Configuración avanzada del dispositivo",
             "• Control completo de categorías y mensajes",
             "• Monitoreo de batería y estado del sistema",
-            "• Gestión de conexiones WebSocket"
           ]
         };
       case 'tutor':
@@ -333,7 +331,7 @@ export default function ESP32AdminControlScreen() {
 
   const getConnectionStatusText = () => {
     if (status.connected) return '🟢 Sistema Conectado';
-    if (connecting) return '🟡 Conectando al servidor...';
+    if (connecting) return '🟡 Conectando al control...';
     return '🔴 Desconectado';
   };
 
@@ -341,11 +339,11 @@ export default function ESP32AdminControlScreen() {
     // Determinar si hay un ESP32 real conectado basado en si tenemos datos del ESP32
     const hasESP32Data = status.battery !== undefined || status.category !== undefined;
     if (status.connected && hasESP32Data) {
-      return '📡 ESP32 Hardware: Conectado';
+      return '📡 Control: Conectado';
     } else if (status.connected) {
-      return '📡 ESP32 Hardware: Verificando...';
+      return '📡 Control: Verificando...';
     }
-    return '📡 ESP32 Hardware: Desconectado';
+    return '📡 Control: Desconectado';
   };
 
   return (
@@ -354,12 +352,10 @@ export default function ESP32AdminControlScreen() {
         <View style={{ padding: 8 }}>
           {/* Header */}
           <View style={{ marginBottom: 20 }}>
-            <Text style={{ fontSize: 24, fontWeight: 'bold', color: theme === 'dark' ? '#f9fafb' : '#333', marginBottom: 8 }}>
-              Control ESP32 TalkingChildren
+            <Text style={{ fontSize: 24, fontWeight: 'bold', padding: 14, color: theme === 'dark' ? '#f9fafb' : '#333', marginBottom: 8 }}>
+              Control TalkingChildren
             </Text>
-            <Text style={{ fontSize: 14, color: theme === 'dark' ? '#9ca3af' : '#666' }}>
-              Configuración y control del dispositivo - 4 botones físicos, 10 categorías, 100 mensajes
-            </Text>
+          
           </View>
 
         {/* Estado de Conexión */}
@@ -385,13 +381,13 @@ export default function ESP32AdminControlScreen() {
           <Text style={{ fontSize: 14, marginBottom: 4, color: status.battery !== undefined ? '#4CAF50' : (theme === 'dark' ? '#9ca3af' : '#666') }}>
             {getESP32StatusText()}
           </Text>
-          <Text style={{ fontSize: 12, color: theme === 'dark' ? '#9ca3af' : '#666', marginBottom: 8 }}>
+          {/* <Text style={{ fontSize: 12, color: theme === 'dark' ? '#9ca3af' : '#666', marginBottom: 8 }}>
             Servidor: {url}
-          </Text>
+          </Text> */}
           {status.battery !== undefined && (
             <View style={{ marginTop: 8 }}>
               <Text style={{ fontSize: 12, color: theme === 'dark' ? '#9ca3af' : '#666' }}>
-                🔋 Batería ESP32: {status.battery}% | Categoría: {status.category || 'N/A'}
+                🔋 Batería Control: {status.battery}% | Categoría: {status.category || 'N/A'}
               </Text>
               <Text style={{ fontSize: 12, color: status.system_on !== false ? '#4CAF50' : '#F44336' }}>
                 ⚡ Estado Sistema: {status.system_on !== false ? 'ENCENDIDO' : 'APAGADO'}
@@ -410,90 +406,7 @@ export default function ESP32AdminControlScreen() {
           )}
         </View>
 
-        {/* Configuración de Conexión */}
-        <View style={{ 
-          backgroundColor: theme === 'dark' ? '#1f2937' : 'white', 
-          padding: 16, 
-          borderRadius: 12, 
-          marginBottom: 20,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.1,
-          shadowRadius: 4,
-          elevation: 3,
-        }}>
-          <Text style={{ fontSize: 16, fontWeight: '600', marginBottom: 12, color: theme === 'dark' ? '#f9fafb' : '#333' }}>
-            Configuración WebSocket
-          </Text>
-          <TextInput
-            value={url}
-            onChangeText={setUrl}
-            placeholder="ws://IP:8080/ws"
-            placeholderTextColor={theme === 'dark' ? '#6b7280' : '#9ca3af'}
-            style={{ 
-              borderWidth: 1, 
-              borderColor: theme === 'dark' ? '#374151' : '#ddd', 
-              padding: 12, 
-              borderRadius: 8, 
-              marginBottom: 12,
-              backgroundColor: theme === 'dark' ? '#374151' : '#f9f9f9',
-              color: theme === 'dark' ? '#f9fafb' : '#333'
-            }}
-          />
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <TouchableOpacity
-              onPress={() => connect(url)}
-              disabled={status.connected || connecting}
-              style={{ 
-                backgroundColor: status.connected ? '#ccc' : '#4CAF50', 
-                padding: 12, 
-                borderRadius: 8, 
-                flex: 1, 
-                marginRight: 8,
-                opacity: status.connected || connecting ? 0.6 : 1
-              }}
-            >
-              <Text style={{ textAlign: 'center', color: 'white', fontWeight: '600' }}>
-                {connecting ? 'Conectando...' : 'Conectar'}
-              </Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity
-              onPress={disconnect}
-              disabled={!status.connected}
-              style={{ 
-                backgroundColor: !status.connected ? '#ccc' : '#F44336', 
-                padding: 12, 
-                borderRadius: 8, 
-                flex: 1,
-                opacity: !status.connected ? 0.6 : 1
-              }}
-            >
-              <Text style={{ textAlign: 'center', color: 'white', fontWeight: '600' }}>
-                Desconectar
-              </Text>
-            </TouchableOpacity>
-          </View>
-          
-          {/* Botones de Diagnóstico */}
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 12 }}>
-            <TouchableOpacity
-              onPress={handleForceReconnect}
-              style={{ 
-                backgroundColor: '#FF9800', 
-                padding: 10, 
-                borderRadius: 8, 
-                flex: 1
-              }}
-            >
-              <Text style={{ textAlign: 'center', color: 'white', fontWeight: '600', fontSize: 12 }}>
-                Reconectar
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Información específica por rol */}
+          {/* Información específica por rol */}
         <View style={{ 
           backgroundColor: theme === 'dark' ? '#0f172a' : '#f8fafc', 
           padding: 16, 
@@ -537,7 +450,11 @@ export default function ESP32AdminControlScreen() {
               </Text>
             ))}
           </View>
-        </View>
+          </View>
+          
+        
+
+        
 
         {/* Control de Categorías */}
         <View style={{ 
@@ -552,7 +469,7 @@ export default function ESP32AdminControlScreen() {
           elevation: 3,
         }}>
           <Text style={{ fontSize: 16, fontWeight: '600', marginBottom: 12, color: theme === 'dark' ? '#f9fafb' : '#333' }}>
-            Control de Categorías
+           Categorías - Actualizar categoria del control
           </Text>
           <Text style={{ fontSize: 12, color: theme === 'dark' ? '#9ca3af' : '#666', marginBottom: 12 }}>
             Categoría actual: {categories[currentCategory - 1]} ({currentCategory}/10)
@@ -597,11 +514,10 @@ export default function ESP32AdminControlScreen() {
             💡 10 categorías con 100 mensajes totales (10 por categoría)
           </Text>
           <Text style={{ fontSize: 11, color: theme === 'dark' ? '#9ca3af' : '#666', marginTop: 4, textAlign: 'center' }}>
-            Triple presión B3 en ESP32 = Cambiar categoría
+            Triple presión para el Botón 3 = Cambiar categoría
           </Text>
         </View>
 
-        {/* Control de Mensajes Específicos - NUEVO */}
         <View style={{ 
           backgroundColor: theme === 'dark' ? '#1f2937' : 'white', 
           padding: 16, 
@@ -614,7 +530,7 @@ export default function ESP32AdminControlScreen() {
           elevation: 3,
         }}>
           <Text style={{ fontSize: 16, fontWeight: '600', marginBottom: 12, color: theme === 'dark' ? '#f9fafb' : '#333' }}>
-            🎵 Control de Mensajes (App → ESP32)
+            🎵 Control de Mensajes
           </Text>
           
           <Text style={{ fontSize: 12, color: theme === 'dark' ? '#9ca3af' : '#666', marginBottom: 12 }}>
@@ -784,7 +700,7 @@ export default function ESP32AdminControlScreen() {
                 borderRadius: 8
               }}>
                 <Text style={{ fontSize: 12, color: '#666', marginBottom: 12, textAlign: 'center' }}>
-                  Selecciona qué mensajes aparecerán en los 3 botones físicos del ESP32
+                  Selecciona qué mensajes aparecerán en los 3 botones del control.
                 </Text>
                 
                 {[0, 1, 2].map((buttonIndex) => (
@@ -856,10 +772,10 @@ export default function ESP32AdminControlScreen() {
           elevation: 3,
         }}>
           <Text style={{ fontSize: 16, fontWeight: '600', marginBottom: 12, color: theme === 'dark' ? '#f9fafb' : '#333' }}>
-            Pruebas de Botones ESP32
+            Pruebas de Botones 
           </Text>
           <Text style={{ fontSize: 12, color: theme === 'dark' ? '#9ca3af' : '#666', marginBottom: 12 }}>
-            Simular presión de botones físicos del ESP32
+            Simular presión de botones en el control.
           </Text>
           
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 }}>
@@ -885,7 +801,7 @@ export default function ESP32AdminControlScreen() {
           </View>
 
           <Text style={{ fontSize: 11, color: '#666', textAlign: 'center' }}>
-            Botón 4: Mantener 3s = Encender/Apagar | Presión corta = Info conexión
+            Botón 4: Mantener 3s = Encender/Apagar
           </Text>
         </View>
 
@@ -902,7 +818,7 @@ export default function ESP32AdminControlScreen() {
           elevation: 3,
         }}>
           <Text style={{ fontSize: 16, fontWeight: '600', marginBottom: 12, color: theme === 'dark' ? '#f9fafb' : '#333' }}>
-            Control de Alimentación ESP32
+             Gestión de Energía 
           </Text>
           
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -927,7 +843,7 @@ export default function ESP32AdminControlScreen() {
               disabled={!status.connected}
             >
               <Text style={{ textAlign: 'center', color: 'white', fontWeight: '600', fontSize: 14 }}>
-                ⚡ Encender ESP32
+                ⚡ Encender 
               </Text>
             </TouchableOpacity>
 
@@ -952,7 +868,7 @@ export default function ESP32AdminControlScreen() {
               disabled={!status.connected}
             >
               <Text style={{ textAlign: 'center', color: 'white', fontWeight: '600', fontSize: 14 }}>
-                🔌 Apagar ESP32
+                🔌 Apagar 
               </Text>
             </TouchableOpacity>
           </View>
@@ -962,7 +878,6 @@ export default function ESP32AdminControlScreen() {
           </Text>
         </View>
 
-        {/* Información del Hardware */}
         <View style={{ 
           backgroundColor: theme === 'dark' ? '#1e3a8a20' : '#E3F2FD', 
           padding: 16, 
@@ -970,16 +885,97 @@ export default function ESP32AdminControlScreen() {
           marginBottom: 20,
         }}>
           <Text style={{ fontSize: 14, fontWeight: '600', color: theme === 'dark' ? '#60a5fa' : '#1976D2', marginBottom: 8 }}>
-            ℹ️ Información del Hardware
+            ℹ️ Información del Sistema
           </Text>
           <Text style={{ fontSize: 12, color: theme === 'dark' ? '#e5e7eb' : '#333', lineHeight: 18 }}>
             • <Text style={{ fontWeight: '600' }}>Botón 1-2:</Text> Reproducir mensajes{'\n'}
             • <Text style={{ fontWeight: '600' }}>Botón 3:</Text> Reproducir mensaje / 3x presiones = Cambiar categoría{'\n'}
             • <Text style={{ fontWeight: '600' }}>Botón 4:</Text> Info conexión / Mantener 3s = Encender/Apagar{'\n'}
-            • <Text style={{ fontWeight: '600' }}>Archivos:</Text> 001.wav - 100.wav en microSD{'\n'}
+            • <Text style={{ fontWeight: '600' }}>Archivos:</Text> 001.mp3 - 100.mp3 en microSD{'\n'}
             • <Text style={{ fontWeight: '600' }}>Categorías:</Text> 10 categorías con 10 mensajes cada una{'\n'}
             • <Text style={{ fontWeight: '600' }}>Total:</Text> 100 mensajes de audio disponibles
           </Text>
+          </View>
+          <View style={{ 
+          backgroundColor: theme === 'dark' ? '#1f2937' : 'white', 
+          padding: 16, 
+          borderRadius: 12, 
+          marginBottom: 20,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
+          elevation: 3,
+        }}>
+          <Text style={{ fontSize: 16, fontWeight: '600', marginBottom: 12, color: theme === 'dark' ? '#f9fafb' : '#333' }}>
+            Configuración del Servidor
+          </Text>
+          <TextInput
+            value={url}
+            onChangeText={setUrl}
+            placeholder="ws://IP:8080/ws"
+            placeholderTextColor={theme === 'dark' ? '#6b7280' : '#9ca3af'}
+            style={{ 
+              borderWidth: 1, 
+              borderColor: theme === 'dark' ? '#374151' : '#ddd', 
+              padding: 12, 
+              borderRadius: 8, 
+              marginBottom: 12,
+              backgroundColor: theme === 'dark' ? '#374151' : '#f9f9f9',
+              color: theme === 'dark' ? '#f9fafb' : '#333'
+            }}
+          />
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <TouchableOpacity
+              onPress={() => connect(url)}
+              disabled={status.connected || connecting}
+              style={{ 
+                backgroundColor: status.connected ? '#ccc' : '#4CAF50', 
+                padding: 12, 
+                borderRadius: 8, 
+                flex: 1, 
+                marginRight: 8,
+                opacity: status.connected || connecting ? 0.6 : 1
+              }}
+            >
+              <Text style={{ textAlign: 'center', color: 'white', fontWeight: '600' }}>
+                {connecting ? 'Conectando...' : 'Conectar'}
+              </Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity
+              onPress={disconnect}
+              disabled={!status.connected}
+              style={{ 
+                backgroundColor: !status.connected ? '#ccc' : '#F44336', 
+                padding: 12, 
+                borderRadius: 8, 
+                flex: 1,
+                opacity: !status.connected ? 0.6 : 1
+              }}
+            >
+              <Text style={{ textAlign: 'center', color: 'white', fontWeight: '600' }}>
+                Desconectar
+              </Text>
+            </TouchableOpacity>
+          </View>
+          
+          {/* Botones de Diagnóstico */}
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 12 }}>
+            <TouchableOpacity
+              onPress={handleForceReconnect}
+              style={{ 
+                backgroundColor: '#FF9800', 
+                padding: 10, 
+                borderRadius: 8, 
+                flex: 1
+              }}
+            >
+              <Text style={{ textAlign: 'center', color: 'white', fontWeight: '600', fontSize: 12 }}>
+                Reconectar
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
         </View>
       </ScrollView>

@@ -136,15 +136,15 @@ const SettingsScreen = () => {
           onPress={() => navigation.navigate('Profile')}
         />
 
-        <SettingItem
+        {/* <SettingItem
           icon={<MessageCircle size={24} color="#25D366" />}
           title="Configuración WhatsApp"
           subtitle="Configurar notificaciones de WhatsApp"
           onPress={() => navigation.navigate('WhatsAppConfig')}
-        />
+        /> */}
 
         {/* Configuraciones adicionales para admin */}
-        {user?.role_name === 'administrador' && (
+        {/* {user?.role_name === 'administrador' && (
           <>
             <Text className={`text-xl font-bold mb-4 mt-8 ${isDark ? 'text-white' : 'text-black'}`}>
               Configuración Avanzada
@@ -157,7 +157,7 @@ const SettingsScreen = () => {
               onPress={() => navigation.navigate('Button')}
             />
           </>
-        )}
+        )} */}
 
         {/* Botón de cerrar sesión */}
         <TouchableOpacity

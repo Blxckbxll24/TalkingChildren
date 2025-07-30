@@ -71,60 +71,60 @@ const DashboardScreen = () => {
                     bgColorLight: 'bg-blue-100', 
                     bgColorDark: 'bg-blue-800' 
                 },
-                { 
-                    id: '2', 
-                    title: 'Total Mensajes', 
-                    value: stats.totalMessagesAdmin || 0, 
-                    bgColorLight: 'bg-green-100', 
-                    bgColorDark: 'bg-green-800' 
-                },
-                { 
-                    id: '3', 
-                    title: 'Categorías', 
-                    value: stats.totalCategories || 0, 
-                    bgColorLight: 'bg-purple-100', 
-                    bgColorDark: 'bg-purple-800' 
-                },
-                { 
-                    id: '4', 
-                    title: 'Relaciones', 
-                    value: stats.totalRelations || 0, 
-                    bgColorLight: 'bg-yellow-100', 
-                    bgColorDark: 'bg-yellow-800' 
-                }
+                // { 
+                //     id: '2', 
+                //     title: 'Total Mensajes', 
+                //     value: stats.totalMessagesAdmin || 0, 
+                //     bgColorLight: 'bg-green-100', 
+                //     bgColorDark: 'bg-green-800' 
+                // },
+                // { 
+                //     id: '3', 
+                //     title: 'Categorías', 
+                //     value: stats.totalCategories || 0, 
+                //     bgColorLight: 'bg-purple-100', 
+                //     bgColorDark: 'bg-purple-800' 
+                // },
+                // { 
+                //     id: '4', 
+                //     title: 'Relaciones', 
+                //     value: stats.totalRelations || 0, 
+                //     bgColorLight: 'bg-yellow-100', 
+                //     bgColorDark: 'bg-yellow-800' 
+                // }
             ];
         } else if (userRole === 'tutor') {
             return [
-                { 
-                    id: '1', 
-                    title: 'Mis Mensajes', 
-                    value: stats.myMessages || 0, 
-                    bgColorLight: 'bg-blue-100', 
-                    bgColorDark: 'bg-blue-800' 
-                },
-                { 
-                    id: '2', 
-                    title: 'Mis Niños', 
-                    value: stats.myChildren || 0, 
-                    bgColorLight: 'bg-green-100', 
-                    bgColorDark: 'bg-green-800' 
-                },
-                { 
-                    id: '3', 
-                    title: 'Mensajes Asignados', 
-                    value: stats.assignedMessages || 0, 
-                    bgColorLight: 'bg-purple-100', 
-                    bgColorDark: 'bg-purple-800' 
-                },
-                { 
-                    id: '4', 
-                    title: 'ESP32 Estado', 
-                    value: isConnected ? 'Conectado' : 'Desconectado', 
-                    bgColorLight: 'bg-yellow-100', 
-                    bgColorDark: 'bg-yellow-800',
-                    textStyle: { fontSize: 14 }, 
-                    isItalic: true 
-                }
+                // { 
+                //     id: '1', 
+                //     title: 'Mis Mensajes', 
+                //     value: stats.myMessages || 0, 
+                //     bgColorLight: 'bg-blue-100', 
+                //     bgColorDark: 'bg-blue-800' 
+                // },
+                // { 
+                //     id: '2', 
+                //     title: 'Mis Niños', 
+                //     value: stats.myChildren || 0, 
+                //     bgColorLight: 'bg-green-100', 
+                //     bgColorDark: 'bg-green-800' 
+                // },
+                // { 
+                //     id: '3', 
+                //     title: 'Mensajes Asignados', 
+                //     value: stats.assignedMessages || 0, 
+                //     bgColorLight: 'bg-purple-100', 
+                //     bgColorDark: 'bg-purple-800' 
+                // },
+                // { 
+                //     id: '4', 
+                //     title: 'ESP32 Estado', 
+                //     value: isConnected ? 'Conectado' : 'Desconectado', 
+                //     bgColorLight: 'bg-yellow-100', 
+                //     bgColorDark: 'bg-yellow-800',
+                //     textStyle: { fontSize: 14 }, 
+                //     isItalic: true 
+                // }
             ];
         } else {
             // Para rol 'niño' - datos reales del dashboard
@@ -143,13 +143,13 @@ const DashboardScreen = () => {
                     bgColorLight: 'bg-green-100', 
                     bgColorDark: 'bg-green-800' 
                 },
-                { 
-                    id: '3', 
-                    title: 'Categorías', 
-                    value: stats.totalCategories || 0, 
-                    bgColorLight: 'bg-purple-100', 
-                    bgColorDark: 'bg-purple-800' 
-                },
+                // { 
+                //     id: '3', 
+                //     title: 'Categorías', 
+                //     value: stats.totalCategories || 0, 
+                //     bgColorLight: 'bg-purple-100', 
+                //     bgColorDark: 'bg-purple-800' 
+                // },
                 { 
                     id: '4', 
                     title: 'Total Aprendido', 
@@ -196,26 +196,23 @@ const DashboardScreen = () => {
     };
 
     const getUserTitle = (): string => {
-        const userRole = user?.role_name || 'child';
         const userName = user?.name || 'Usuario';
         
-        if (userRole === 'administrador') return 'Panel de Administración';
-        if (userRole === 'tutor') return 'Panel de Tutor';
         return `¡Hola ${userName}!`;
     };
 
     const renderStatItem = ({ item }: { item: StatItem }) => (
         <View
-            className={`rounded-xl p-4 shadow m-2 flex-1 ${isDark ? item.bgColorDark : item.bgColorLight}`}
-            style={{ minWidth: 140, maxWidth: 160 }}
+            className={`rounded-xl p-4 shadow  ${isDark ? item.bgColorDark : item.bgColorLight}`}
+            style={{ minWidth: 370, maxWidth: 400 }}
         >
             <Text
-                className={`${isDark ? 'text-white' : 'text-black'} text-lg font-bold`}
+                className={`${isDark ? 'text-white text-center' : 'text-black text-center'} text-lg font-bold`}
                 style={item.isItalic ? { fontStyle: 'italic', ...item.textStyle } : item.textStyle}
             >
                 {item.value}
             </Text>
-            <Text className={`${isDark ? 'text-gray-300' : 'text-gray-600'} mt-1`}>
+            <Text className={`${isDark ? 'text-gray-300 text-center' : 'text-gray-600 text-center'} mt-1`}>
                 {item.title}
             </Text>
         </View>
@@ -223,7 +220,7 @@ const DashboardScreen = () => {
 
     if (loading) {
         return (
-            <View className={`flex-1 justify-center items-center ${isDark ? 'bg-gray-900' : 'bg-white'}`}>
+            <View className={` justify-center items-center ${isDark ? 'bg-gray-900' : 'bg-white'}`}>
                 <ActivityIndicator size="large" color={isDark ? '#fff' : '#000'} />
                 <Text className={`mt-4 ${isDark ? 'text-white' : 'text-black'}`}>
                     Cargando dashboard...
@@ -239,7 +236,7 @@ const DashboardScreen = () => {
         >
             <ScrollView className='p-6 flex-1 mt-4' showsVerticalScrollIndicator={false}>
                 <Text className={`text-3xl font-bold mb-2 text-center ${isDark ? 'text-white' : 'text-black'}`}>
-                    Dashboard
+                    Bienvenido al Inicio
                 </Text>
                 
                 <Text className={`text-center mb-6 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
@@ -282,7 +279,7 @@ const DashboardScreen = () => {
                             </View>
                             <View className="flex-1">
                                 <Text className="text-white text-xl font-bold mb-1">
-                                    Monitor ESP32
+                                    Monitor del Control
                                 </Text>
                                 <Text className="text-blue-100 text-sm mb-2">
                                     Ver eventos en tiempo real del dispositivo
@@ -290,7 +287,7 @@ const DashboardScreen = () => {
                                 <View className="flex-row items-center">
                                     <View className={`w-3 h-3 rounded-full mr-2 ${status.connected ? 'bg-green-400' : 'bg-red-400'}`} />
                                     <Text className={`text-xs ${status.connected ? 'text-green-200' : 'text-red-200'}`}>
-                                        {status.connected ? 'ESP32 Conectado' : 'ESP32 Desconectado'}
+                                        {status.connected ? 'Conectado' : 'Desconectado'}
                                     </Text>
                                     {status.battery !== undefined && (
                                         <Text className="text-blue-200 text-xs ml-3">
@@ -306,8 +303,7 @@ const DashboardScreen = () => {
                     </TouchableOpacity>
                 )}
 
-                {/* Botón Configuración - Solo para administradores */}
-                {user?.role_name === 'administrador' && (
+            {(user?.role_name === 'administrador' || user?.role_name === 'tutor') && (
                     <TouchableOpacity
                         className={`rounded-2xl p-6 mb-6 shadow-lg ${isDark ? 'bg-purple-800' : 'bg-purple-600'}`}
                         onPress={() => {
@@ -337,7 +333,7 @@ const DashboardScreen = () => {
                                     Gestionar configuraciones del sistema
                                 </Text>
                                 <Text className="text-purple-200 text-xs">
-                                    WhatsApp • Botones • Preferencias
+                                    Perfil • Salir del sistema • Preferencias
                                 </Text>
                             </View>
                             <View className="ml-4">
@@ -388,7 +384,7 @@ const DashboardScreen = () => {
                     </TouchableOpacity>
                 )}
 
-                <View
+                {/* <View
                     className={`rounded-2xl p-6 shadow ${isDark ? 'bg-gray-800' : 'bg-gray-100'} mb-24`}
                 >
                     <Text className={`text-lg font-bold mb-4 ${isDark ? 'text-white' : 'text-black'}`}>
@@ -402,7 +398,7 @@ const DashboardScreen = () => {
                             {index + 1}. {item}
                         </Text>
                     ))}
-                </View>
+                </View> */}
             </ScrollView>
 
             <BottomNavBar theme={theme} />
